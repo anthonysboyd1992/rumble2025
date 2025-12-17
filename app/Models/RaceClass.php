@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RaceClass extends Model
 {
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'sort_order'];
 
     public function entries(): HasMany
     {

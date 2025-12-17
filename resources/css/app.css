@@ -23,8 +23,18 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
+    /* RUMBLE Logo Colors */
+    --color-rumble-blue: hsl(206.07deg 75.92% 37.45%);
+    --color-rumble-blue-400: hsl(206.07deg 75.92% 50%);
+    --color-rumble-blue-500: hsl(206.07deg 75.92% 37.45%);
+    --color-rumble-blue-600: hsl(206.07deg 75.92% 30%);
+    --color-rumble-dark: hsl(312deg 7.69% 12.75%);
+    --color-rumble-dark-700: hsl(312deg 7.69% 18%);
+    --color-rumble-dark-800: hsl(312deg 7.69% 12.75%);
+    --color-rumble-dark-900: hsl(312deg 7.69% 8%);
+
+    --color-accent: var(--color-rumble-blue);
+    --color-accent-content: var(--color-white);
     --color-accent-foreground: var(--color-white);
 }
 
@@ -59,6 +69,75 @@ input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+}
+
+/* RUMBLE Custom Styles */
+.rumble-blue {
+    color: hsl(206.07deg 75.92% 37.45%);
+}
+
+.rumble-blue-bg {
+    background-color: hsl(206.07deg 75.92% 37.45%);
+}
+
+.rumble-blue-bg:hover {
+    background-color: hsl(206.07deg 75.92% 50%);
+}
+
+.rumble-blue-bg-light {
+    background-color: hsl(206.07deg 75.92% 37.45% / 0.1);
+}
+
+.rumble-dark-bg-hover:hover {
+    background-color: hsl(312deg 7.69% 18%);
+}
+
+.rumble-dark-bg {
+    background-color: hsl(312deg 7.69% 12.75%);
+}
+
+.rumble-dark-bg-700 {
+    background-color: hsl(312deg 7.69% 18%);
+}
+
+.rumble-dark-bg-900 {
+    background-color: hsl(312deg 7.69% 8%);
+}
+
+.rumble-border {
+    border-color: hsl(312deg 7.69% 18%);
+}
+
+.rumble-text-muted {
+    color: hsl(312deg 7.69% 50%);
+}
+
+.rumble-text-muted:hover {
+    color: hsl(206.07deg 75.92% 37.45%);
+}
+
+.rumble-blue-border {
+    border-color: hsl(206.07deg 75.92% 37.45%);
+}
+
+.rumble-blue-border:hover {
+    border-color: hsl(206.07deg 75.92% 50%);
+}
+
+.rumble-card {
+    background-color: hsl(312deg 7.69% 12.75%);
+    border-color: hsl(312deg 7.69% 18%);
+}
+
+.rumble-card-hover:hover {
+    border-color: hsl(206.07deg 75.92% 37.45%);
+    background-color: hsl(312deg 7.69% 18%);
+}
+
+/* Logo */
+.rumble-logo {
+    max-height: 80px;
+    width: auto;
 }
 
 /* \[:where(&)\]:size-4 {

@@ -52,7 +52,7 @@ class LineupGenerator
      */
     public function getStandings(?string $day = null, ?int $raceClassId = null): Collection
     {
-        $query = Entry::with('results.session');
+        $query = Entry::with(['results.session', 'raceClass']);
         
         if ($raceClassId) {
             $query->where('race_class_id', $raceClassId);
@@ -94,6 +94,15 @@ class LineupGenerator
                 'amain_points' => $amainResults->isNotEmpty() ? $amainPoints : null,
                 'amain_status' => $amainDns ? 'DNS' : ($amainDq ? 'DQ' : null),
                 'qualifying_time' => ($qualifyingResult?->is_dns || $qualifyingResult?->is_dnf) ? null : $qualifyingResult?->time,
+                'all_results' => $results->map(fn($r) => [
+                    'session_name' => $r->session->name,
+                    'session_type' => $r->session->type,
+                    'position' => $r->position,
+                    'points' => $r->points_earned,
+                    'is_dns' => $r->is_dns,
+                    'is_dnf' => $r->is_dnf,
+                    'time' => $r->time,
+                ])->sortBy('session.name')->values(),
             ];
         })->sort(function ($a, $b) {
             // Primary: total points descending

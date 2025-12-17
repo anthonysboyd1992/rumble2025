@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUMBLE in Fort Wayne - Race Management</title>
+    <title>RUMBLE in Fort Wayne - Qualifying Times</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     <style>
@@ -37,19 +37,18 @@
                 </a>
             </div>
             <x-rumble-logo />
-            <p class="text-sm rumble-text-muted mt-2">Midget Race Management System</p>
+            <p class="text-sm rumble-text-muted mt-2">Practice Times Management</p>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-1 space-y-8">
                 <livewire:manage-classes />
-                <livewire:import-results />
-                <livewire:reset-data />
+                <livewire:crossing-import />
+                <livewire:reset-qualifying />
             </div>
 
-            <div class="lg:col-span-2 space-y-8">
-                <livewire:standings />
-                <livewire:driver-results />
+            <div class="lg:col-span-2">
+                <livewire:qualifying-leaderboard />
             </div>
         </div>
     </div>

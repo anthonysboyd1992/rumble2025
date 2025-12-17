@@ -20,6 +20,11 @@ class Entry extends Model
         return $this->hasMany(Result::class);
     }
 
+    public function raceClass()
+    {
+        return $this->belongsTo(RaceClass::class);
+    }
+
     public function getTotalPointsAttribute(): int
     {
         return $this->results->sum('points_earned');

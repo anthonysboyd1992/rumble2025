@@ -1,17 +1,23 @@
-<div class="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+<div class="rumble-dark-bg rounded-xl p-6 rumble-border">
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold text-amber-400">Standings</h2>
+        <h2 class="text-xl font-bold rumble-blue">Standings</h2>
         <div class="flex gap-3 items-center">
-            <select wire:model.live="classFilter" class="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-white">
+            <select wire:model.live="dayFilter" class="rumble-dark-bg-700 rumble-border rounded-lg px-3 py-1.5 text-sm text-white">
+                <option value="thursday">Thursday</option>
+                <option value="friday">Friday</option>
+                <option value="saturday">Saturday</option>
+                <option value="">All Days</option>
+            </select>
+            <select wire:model.live="classFilter" class="rumble-dark-bg-700 rumble-border rounded-lg px-3 py-1.5 text-sm text-white">
                 <option value="">All Classes</option>
                 @foreach($classes as $class)
                     <option value="{{ $class->id }}">{{ $class->name }}</option>
                 @endforeach
             </select>
-            <a href="{{ route('print.standings', ['day' => 'friday', 'class' => $classFilter]) }}" target="_blank" class="bg-zinc-700 hover:bg-zinc-600 text-white text-sm px-3 py-1.5 rounded-lg transition-colors">
+            <a href="{{ route('print.standings', ['day' => $dayFilter ?: null, 'class' => $classFilter]) }}" target="_blank" class="rumble-dark-bg-700 rumble-dark-bg-hover text-white text-sm px-3 py-1.5 rounded-lg transition-colors">
                 Print
             </a>
-            <a href="{{ route('export.standings', ['day' => 'friday', 'class' => $classFilter]) }}" class="bg-zinc-700 hover:bg-zinc-600 text-white text-sm px-3 py-1.5 rounded-lg transition-colors">
+            <a href="{{ route('export.standings', ['day' => $dayFilter ?: null, 'class' => $classFilter]) }}" class="rumble-dark-bg-700 rumble-dark-bg-hover text-white text-sm px-3 py-1.5 rounded-lg transition-colors">
                 CSV
             </a>
         </div>
@@ -20,7 +26,7 @@
     <div class="flex items-center gap-4 mb-4 p-3 bg-zinc-800/50 rounded-lg">
         <button 
             wire:click="toggleInversion"
-            class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors {{ $inversionEnabled ? 'bg-amber-500 text-black' : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600' }}"
+            class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors {{ $inversionEnabled ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
         >
             Inversion {{ $inversionEnabled ? 'ON' : 'OFF' }}
         </button>
@@ -36,7 +42,7 @@
             <span class="text-zinc-400 text-sm">inverted</span>
         </div>
         @if($inversionEnabled)
-            <span class="text-amber-400 text-sm">(1st → {{ $inversionCount }}th, {{ $inversionCount }}th → 1st)</span>
+            <span class="rumble-blue text-sm">(1st → {{ $inversionCount }}th, {{ $inversionCount }}th → 1st)</span>
         @endif
     </div>
 
@@ -61,7 +67,7 @@
                     @foreach($standings as $index => $standing)
                         <tr class="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors">
                             <td class="py-3 pr-4 text-zinc-400">{{ $index + 1 }}</td>
-                            <td class="py-3 pr-4 font-mono text-amber-400 font-bold">{{ $standing['entry']->car_number }}</td>
+                            <td class="py-3 pr-4 font-mono rumble-blue font-bold">{{ $standing['entry']->car_number }}</td>
                             <td class="py-3 pr-4 text-zinc-200">{{ $standing['entry']->driver_name }}</td>
                             <td class="py-3 pr-4 text-right font-mono text-zinc-500 text-sm">{{ $standing['qualifying_time'] ?? '-' }}</td>
                             <td class="py-3 pr-4 text-right {{ $standing['qualifying_status'] ? 'text-red-400' : 'text-zinc-400' }}">

@@ -10,6 +10,13 @@ use Livewire\Component;
 class PublicLeaderboard extends Component
 {
     public ?int $classFilter = null;
+    public ?string $dayFilter = 'friday';
+    public ?int $expandedDriver = null;
+
+    public function toggleDriver(int $index): void
+    {
+        $this->expandedDriver = $this->expandedDriver === $index ? null : $index;
+    }
 
     public function mount(): void
     {
@@ -22,13 +29,13 @@ class PublicLeaderboard extends Component
     public function standings()
     {
         $generator = new LineupGenerator();
-        return $generator->getStandings('friday', $this->classFilter);
+        return $generator->getStandings($this->dayFilter, $this->classFilter);
     }
 
     #[Computed]
     public function classes()
     {
-        return RaceClass::orderBy('name')->get();
+        return RaceClass::orderBy('sort_order')->orderBy('name')->get();
     }
 
     #[Computed]

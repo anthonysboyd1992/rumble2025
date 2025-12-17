@@ -3,14 +3,17 @@
 namespace App\Livewire;
 
 use App\Models\Entry;
+use App\Models\RaceClass;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class DriverResults extends Component
 {
     public ?int $selectedEntryId = null;
+    public ?int $classFilter = null;
 
     #[On('results-imported')]
+    #[On('classes-updated')]
     public function refresh(): void
     {
     }
@@ -22,18 +25,20 @@ class DriverResults extends Component
 
     public function render()
     {
-        $entries = Entry::with(['results.session'])
-            ->withCount('results')
-            ->orderBy('car_number')
-            ->get();
+        $query = Entry::with(['results.session', 'raceClass'])
+            ->withCount('results');
 
-        $selectedEntry = $this->selectedEntryId 
-            ? Entry::with(['results.session'])->find($this->selectedEntryId) 
-            : null;
+        if ($this->classFilter) {
+            $query->where('race_class_id', $this->classFilter);
+        }
+
+        $entries = $query->get()
+            ->sortByDesc(fn($entry) => $entry->results->sum('points_earned'))
+            ->values();
 
         return view('livewire.driver-results', [
             'entries' => $entries,
-            'selectedEntry' => $selectedEntry,
+            'classes' => RaceClass::orderBy('sort_order')->orderBy('name')->get(),
         ]);
     }
 }

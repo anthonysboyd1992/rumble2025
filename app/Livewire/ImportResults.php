@@ -17,6 +17,7 @@ class ImportResults extends Component
     }
     public string $rawText = '';
     public ?int $raceClassId = null;
+    public string $day = 'friday';
     public array $importedResults = [];
     public string $message = '';
 
@@ -33,7 +34,7 @@ class ImportResults extends Component
         }
 
         $parser = new ResultParser();
-        $this->importedResults = $parser->parse($this->rawText, 'friday', $this->raceClassId);
+        $this->importedResults = $parser->parse($this->rawText, $this->day, $this->raceClassId);
 
         $count = count($this->importedResults);
         $this->message = "Successfully imported {$count} results.";
@@ -48,7 +49,7 @@ class ImportResults extends Component
     public function render()
     {
         return view('livewire.import-results', [
-            'classes' => RaceClass::orderBy('name')->get(),
+            'classes' => RaceClass::orderBy('sort_order')->orderBy('name')->get(),
         ]);
     }
 }
