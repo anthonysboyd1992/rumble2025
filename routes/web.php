@@ -80,6 +80,14 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+Route::get('/users', function () {
+    return view('users');
+})->middleware(['auth'])->name('users');
+
+Route::get('/force-password-change', function () {
+    return view('force-password-change');
+})->middleware(['auth'])->name('force-password-change');
+
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 

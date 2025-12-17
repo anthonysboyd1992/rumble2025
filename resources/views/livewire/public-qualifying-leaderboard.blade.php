@@ -2,7 +2,7 @@
     <div class="container mx-auto px-4 py-8">
         <header class="text-center mb-8">
             <x-rumble-logo />
-            <p class="text-lg rumble-text-muted mt-2">Qualifying Times</p>
+            <p class="text-lg rumble-text-muted mt-2">Practice Times</p>
             
             <div class="mt-6 flex justify-center gap-3">
                 <button 

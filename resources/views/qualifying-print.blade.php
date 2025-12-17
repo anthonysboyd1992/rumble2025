@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUMBLE in Fort Wayne - Qualifying Times</title>
+    <title>RUMBLE in Fort Wayne - Practice Times</title>
     <style>
         @page {
             size: letter;
@@ -88,12 +88,12 @@
 </head>
 <body>
     <div class="no-print">
-        <button onclick="window.print()">Print Qualifying Times</button>
+        <button onclick="window.print()">Print Practice Times</button>
     </div>
 
     <div class="header">
         <h1>RUMBLE in Fort Wayne</h1>
-        <p>{{ $className ?? 'All Classes' }} - Qualifying Times - {{ now()->format('F j, Y g:i A') }}</p>
+        <p>{{ $className ?? 'All Classes' }} - Practice Times - {{ now()->format('F j, Y g:i A') }}</p>
         @if(isset($inversion))
             @if($inversion === 'full')
                 <p style="color: #666; font-size: 9pt; margin-top: 4px;">Full Inversion Applied: Entire list reversed</p>

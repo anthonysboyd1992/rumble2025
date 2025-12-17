@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Qualifying Times - RUMBLE in Fort Wayne</title>
+    <title>All Practice Times - RUMBLE in Fort Wayne</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; font-size: 10pt; padding: 0.5in; }
@@ -31,11 +31,11 @@
 </head>
 <body>
     <div class="no-print">
-        <button onclick="window.print()">{{ isset($showDay) && $showDay ? 'Print All Days' : 'Print Day' }} Qualifying Times</button>
+        <button onclick="window.print()">{{ isset($showDay) && $showDay ? 'Print All Days' : 'Print Day' }} Practice Times</button>
     </div>
 
     <h1>RUMBLE in Fort Wayne</h1>
-    <h2>{{ isset($showDay) && $showDay ? 'All Days - ' : '' }}All Qualifying Times{{ $className ? ' - ' . $className : '' }}</h2>
+    <h2>{{ isset($showDay) && $showDay ? 'All Days - ' : '' }}All Practice Times{{ $className ? ' - ' . $className : '' }}</h2>
 
     <table>
         <thead>
