@@ -76,6 +76,7 @@ Route::get('/leaderboard', function () {
     return view('leaderboard');
 })->name('leaderboard');
 
+
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');

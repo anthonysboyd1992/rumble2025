@@ -1,148 +1,205 @@
-<div wire:poll.5s class="min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <header class="text-center mb-8">
-            <x-rumble-logo />
-            <p class="text-lg rumble-text-muted mt-2">Practice Times</p>
+<div 
+    x-data="{ 
+        currentTime: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+        init() {
+            setInterval(() => this.currentTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }), 1000);
+        }
+    }"
+    wire:poll.2s
+    class="min-h-screen flex flex-col"
+    style="background: #000; color: #fff; font-family: 'Consolas', 'Monaco', monospace; font-size: 14px;"
+>
+    {{-- Header Bar --}}
+    <header class="flex-none flex items-center justify-between px-4 py-1.5" style="background: #000; border-bottom: 1px solid #333;">
+        <div class="flex items-center gap-4">
+            <span style="color: #888;">Session:</span>
+            <span class="font-bold" style="color: #fff;">Practice {{ ucfirst($dayFilter) }}</span>
+            <span style="color: #333;">|</span>
+            <span style="color: #888;">Class:</span>
+            <span class="font-bold" style="color: #fff;">{{ $this->currentClassName }}</span>
             
-            <div class="mt-6 flex justify-center gap-3">
-                <button 
-                    wire:click="$set('dayFilter', 'thursday')"
-                    class="px-6 py-3 rounded-lg text-base font-medium transition-colors {{ $dayFilter === 'thursday' ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
-                >
-                    Thursday
-                </button>
-                <button 
-                    wire:click="$set('dayFilter', 'friday')"
-                    class="px-6 py-3 rounded-lg text-base font-medium transition-colors {{ $dayFilter === 'friday' ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
-                >
-                    Friday
-                </button>
-                <button 
-                    wire:click="$set('dayFilter', 'saturday')"
-                    class="px-6 py-3 rounded-lg text-base font-medium transition-colors {{ $dayFilter === 'saturday' ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
-                >
-                    Saturday
-                </button>
+            <div class="flex gap-1 ml-2">
+                @foreach(['thursday' => 'THU', 'friday' => 'FRI', 'saturday' => 'SAT'] as $day => $label)
+                    <button 
+                        wire:click="$set('dayFilter', '{{ $day }}')"
+                        class="px-2.5 py-0.5 text-xs font-bold"
+                        style="{{ $dayFilter === $day ? 'background: #22c55e; color: #000;' : 'background: #222; color: #555;' }}"
+                    >{{ $label }}</button>
+                @endforeach
             </div>
-            
+
             @if($this->classes->count() > 1)
-                <div class="mt-4 flex justify-center gap-2">
+                <div class="flex gap-1">
                     @foreach($this->classes as $class)
                         <button 
                             wire:click="$set('classFilter', {{ $class->id }})"
-                            class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $classFilter === $class->id ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
-                        >
-                            {{ $class->name }}
-                        </button>
+                            class="px-2.5 py-0.5 text-xs font-bold"
+                            style="{{ $classFilter === $class->id ? 'background: #22c55e; color: #000;' : 'background: #222; color: #555;' }}"
+                        >{{ $class->name }}</button>
                     @endforeach
                 </div>
             @endif
-            
-            <div class="mt-4 flex justify-center items-center gap-3">
-                <label class="text-zinc-400 text-sm">Track Length (miles):</label>
-                <input 
-                    type="text" 
-                    wire:model.live="trackLength" 
-                    class="w-24 bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-white text-sm text-center font-mono"
-                    placeholder="0.142857"
-                >
-            </div>
-            <p class="text-xs text-zinc-600 mt-2">Live updates</p>
-        </header>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <span style="color: #555;">{{ $this->standings->count() }} drivers</span>
+            <span class="text-lg font-bold" style="color: #fff;" x-text="currentTime"></span>
+        </div>
+    </header>
 
+    {{-- Main Content --}}
+    <main class="flex-1 flex" style="background: #000;">
         @if($this->standings->isEmpty())
-            <div class="text-center py-16">
-                <p class="text-zinc-500 text-xl">No qualifying times yet.</p>
-                <p class="text-zinc-600 mt-2">Check back once qualifying begins!</p>
+            <div class="flex-1 flex items-center justify-center">
+                <div style="color: #444;">Waiting for session data...</div>
             </div>
         @else
-            <div class="max-w-5xl mx-auto">
-                <div class="bg-zinc-900/80 rounded-xl border border-zinc-800 overflow-hidden">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-zinc-950 border-b-2 border-zinc-700">
-                                <th class="py-3 px-4 text-left text-xs font-bold uppercase text-zinc-400">Pos</th>
-                                <th class="py-3 px-4 text-left text-xs font-bold uppercase text-zinc-400">Car</th>
-                                <th class="py-3 px-4 text-left text-xs font-bold uppercase text-zinc-400">Driver</th>
-                                <th class="py-3 px-4 text-right text-xs font-bold uppercase text-zinc-400">Best Time</th>
-                                <th class="py-3 px-4 text-left text-xs font-bold uppercase text-zinc-400">Session</th>
-                                <th class="py-3 px-4 text-right text-xs font-bold uppercase text-zinc-400">Speed</th>
-                                <th class="py-3 px-4 text-center text-xs font-bold uppercase text-zinc-400"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($this->standings as $index => $standing)
-                                <tr class="border-b border-zinc-800/50 {{ $index % 2 === 0 ? 'bg-zinc-900/50' : 'bg-zinc-900' }}">
-                                    <td class="py-4 px-4 text-zinc-400 font-bold text-lg">{{ $index + 1 }}</td>
-                                    <td class="py-4 px-4">
-                                        <span class="font-mono text-3xl rumble-blue font-bold">{{ $standing['car_number'] }}</span>
-                                    </td>
-                                    <td class="py-4 px-4 text-zinc-200 text-lg font-medium">{{ $standing['driver_name'] }}</td>
-                                    <td class="py-4 px-4 text-right font-mono text-green-400 font-bold text-xl">{{ \App\Helpers\TimeFormatter::format($standing['best_time']) }}</td>
-                                    <td class="py-4 px-4 text-zinc-400 text-sm">{{ $standing['session_name'] }}</td>
-                                    @php
-                                        $speed = \App\Helpers\TimeFormatter::calculateSpeed($standing['best_time'], $trackLength);
-                                    @endphp
-                                    <td class="py-4 px-4 text-right font-mono text-blue-400">
-                                        @if($speed)
-                                            {{ $speed }} mph
-                                        @else
-                                            <span class="text-zinc-600">-</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-4 px-4">
+            @php 
+                $leaderSeconds = null;
+                $firstStanding = $this->standings->first();
+                if ($firstStanding) {
+                    $leaderSeconds = \App\Helpers\TimeFormatter::parseTimeToSeconds($firstStanding['best_time']);
+                }
+                $leftColumn = $this->standings->take(20)->values();
+                $rightColumn = $this->standings->slice(20, 20)->values();
+            @endphp
+            
+            {{-- Timing Grid --}}
+            <div class="flex flex-1 {{ count($expandedDrivers) > 0 ? '' : '' }}">
+                {{-- Left Column --}}
+                <div class="flex-1 flex flex-col" style="border-right: 1px solid #333;">
+                    <div class="flex items-center px-3 py-1" style="background: #111; color: #666; border-bottom: 1px solid #333; font-size: 11px;">
+                        <div style="width: 30px;">POS</div>
+                        <div style="flex: 1;">DRIVER</div>
+                        <div style="width: 40px; text-align: center;">LAPS</div>
+                        <div style="width: 90px; text-align: right;">BEST</div>
+                        <div style="width: 80px; text-align: right;">DIFF</div>
+                    </div>
+                    
+                    @foreach($leftColumn as $index => $standing)
+                        @php
+                            $seconds = \App\Helpers\TimeFormatter::parseTimeToSeconds($standing['best_time']);
+                            $gap = $index === 0 ? null : '+' . number_format($seconds - $leaderSeconds, 3);
+                            $isExpanded = in_array($index, $expandedDrivers);
+                        @endphp
+                        <div 
+                            wire:click="toggleDriver({{ $index }})"
+                            class="flex items-center px-3 cursor-pointer hover:bg-zinc-900"
+                            style="
+                                height: 32px;
+                                background: {{ $isExpanded ? '#1a1a1a' : ($index % 2 === 0 ? '#000' : '#080808') }};
+                                border-bottom: 1px solid #1a1a1a;
+                                border-left: 2px solid {{ $isExpanded ? '#22c55e' : ($index === 0 ? '#22c55e' : 'transparent') }};
+                            "
+                        >
+                            <div style="width: 30px; color: #fff; font-weight: bold;">{{ $index + 1 }}</div>
+                            <div style="flex: 1;" class="flex items-center gap-2 truncate">
+                                <span style="color: #22c55e; font-weight: bold;">#{{ $standing['car_number'] }}</span>
+                                <span style="color: #fff;" class="truncate">{{ strtoupper($standing['driver_name']) }}</span>
+                            </div>
+                            <div style="width: 40px; text-align: center; color: #22c55e;">{{ $standing['lap_count'] }}</div>
+                            <div style="width: 90px; text-align: right; color: #22c55e; font-weight: bold;">{{ \App\Helpers\TimeFormatter::format($standing['best_time']) }}</div>
+                            <div style="width: 80px; text-align: right; color: #888;">{{ $gap ?? '' }}</div>
+                        </div>
+                    @endforeach
+                </div>
+                
+                {{-- Right Column --}}
+                <div class="flex-1 flex flex-col" style="border-right: 1px solid #333;">
+                    <div class="flex items-center px-3 py-1" style="background: #111; color: #666; border-bottom: 1px solid #333; font-size: 11px;">
+                        <div style="width: 30px;">POS</div>
+                        <div style="flex: 1;">DRIVER</div>
+                        <div style="width: 40px; text-align: center;">LAPS</div>
+                        <div style="width: 90px; text-align: right;">BEST</div>
+                        <div style="width: 80px; text-align: right;">DIFF</div>
+                    </div>
+                    
+                    @foreach($rightColumn as $index => $standing)
+                        @php
+                            $realIndex = $index + 20;
+                            $seconds = \App\Helpers\TimeFormatter::parseTimeToSeconds($standing['best_time']);
+                            $gap = '+' . number_format($seconds - $leaderSeconds, 3);
+                            $isExpanded = in_array($realIndex, $expandedDrivers);
+                        @endphp
+                        <div 
+                            wire:click="toggleDriver({{ $realIndex }})"
+                            class="flex items-center px-3 cursor-pointer hover:bg-zinc-900"
+                            style="
+                                height: 32px;
+                                background: {{ $isExpanded ? '#1a1a1a' : ($index % 2 === 0 ? '#000' : '#080808') }};
+                                border-bottom: 1px solid #1a1a1a;
+                                border-left: 2px solid {{ $isExpanded ? '#22c55e' : 'transparent' }};
+                            "
+                        >
+                            <div style="width: 30px; color: #fff; font-weight: bold;">{{ $realIndex + 1 }}</div>
+                            <div style="flex: 1;" class="flex items-center gap-2 truncate">
+                                <span style="color: #22c55e; font-weight: bold;">#{{ $standing['car_number'] }}</span>
+                                <span style="color: #fff;" class="truncate">{{ strtoupper($standing['driver_name']) }}</span>
+                            </div>
+                            <div style="width: 40px; text-align: center; color: #22c55e;">{{ $standing['lap_count'] }}</div>
+                            <div style="width: 90px; text-align: right; color: #22c55e; font-weight: bold;">{{ \App\Helpers\TimeFormatter::format($standing['best_time']) }}</div>
+                            <div style="width: 80px; text-align: right; color: #888;">{{ $gap }}</div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            
+            {{-- Side Panel for Expanded Drivers --}}
+            @if(count($expandedDrivers) > 0)
+                <div class="flex flex-col overflow-y-auto" style="width: 320px; background: #0a0a0a; border-left: 1px solid #333;">
+                    <div class="px-3 py-2" style="background: #111; border-bottom: 1px solid #333;">
+                        <span style="color: #666; font-size: 11px;">DRIVER DETAILS</span>
+                    </div>
+                    
+                    <div class="flex-1 overflow-y-auto">
+                        @foreach($expandedDrivers as $driverIndex)
+                            @php
+                                $standing = $this->standings[$driverIndex] ?? null;
+                            @endphp
+                            @if($standing)
+                                <div style="border-bottom: 1px solid #222; padding: 10px;">
+                                    {{-- Driver header --}}
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-2">
+                                            <span style="color: #22c55e; font-weight: bold;">#{{ $standing['car_number'] }}</span>
+                                            <span style="color: #fff; font-weight: bold;">{{ strtoupper($standing['driver_name']) }}</span>
+                                        </div>
                                         <button 
-                                            wire:click="toggleDriver({{ $index }})"
-                                            class="text-zinc-400 hover:text-zinc-200 transition-colors"
-                                        >
-                                            <svg class="w-5 h-5 transition-transform {{ $expandedDriver === $index ? 'rotate-180' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                                @if($expandedDriver === $index)
-                                    <tr class="{{ $index % 2 === 0 ? 'bg-zinc-900/50' : 'bg-zinc-900' }}">
-                                        <td colspan="7" class="py-4 px-4">
-                                            <div class="bg-zinc-950 rounded-lg p-4 border border-zinc-800">
-                                                <h4 class="text-zinc-400 text-sm font-semibold mb-3 uppercase">All Times</h4>
-                                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                                                    @foreach($standing['all_times'] as $i => $time)
-                                                        @php
-                                                            $speed = \App\Helpers\TimeFormatter::calculateSpeed($time['time'], $trackLength);
-                                                        @endphp
-                                                        <div class="bg-zinc-900 rounded-lg p-3 border border-zinc-800">
-                                                            <div class="flex justify-between items-center mb-1">
-                                                                <span class="text-zinc-400 text-xs">{{ $time['session'] }}</span>
-                                                                @if($time['lap'] ?? null)
-                                                                    <span class="text-zinc-600 text-xs">Lap {{ $time['lap'] }}</span>
-                                                                @endif
-                                                            </div>
-                                                            <div class="flex justify-between items-center">
-                                                                <span class="font-mono {{ ($time['is_best'] ?? false) ? 'text-green-400 font-bold' : 'text-zinc-300' }} text-lg">
-                                                                    {{ \App\Helpers\TimeFormatter::format($time['time']) }}
-                                                                </span>
-                                                                @if($speed)
-                                                                    <span class="text-blue-400 text-xs font-mono">{{ $speed }} mph</span>
-                                                                @endif
-                                                            </div>
+                                            wire:click="toggleDriver({{ $driverIndex }})"
+                                            style="color: #555; font-size: 16px;"
+                                        >&times;</button>
+                                    </div>
+                                    
+                                    {{-- Session cards --}}
+                                    <div class="flex flex-col gap-2">
+                                        @foreach($standing['times_by_session'] as $session)
+                                            <div style="background: #151515; border: 1px solid #2a2a2a; border-radius: 4px; padding: 6px 8px;">
+                                                <div style="color: #22c55e; font-size: 10px; font-weight: bold; margin-bottom: 4px;">
+                                                    {{ $session['session'] }}
+                                                </div>
+                                                <div class="flex flex-col gap-0.5">
+                                                    @foreach($session['times'] as $time)
+                                                        <div class="flex items-center justify-between" style="font-size: 11px;">
+                                                            @if($time['lap'])
+                                                                <span style="color: #555;">Lap {{ $time['lap'] }}</span>
+                                                            @else
+                                                                <span style="color: #555;">—</span>
+                                                            @endif
+                                                            <span style="color: {{ $time['is_best'] ? '#22c55e' : '#888' }}; font-weight: {{ $time['is_best'] ? 'bold' : 'normal' }};">
+                                                                {{ \App\Helpers\TimeFormatter::format($time['time']) }}
+                                                            </span>
                                                         </div>
                                                     @endforeach
                                                 </div>
                                             </div>
-                                        </td>
-                                    </tr>
-                                @endif
-                            @endforeach
-                        </tbody>
-                    </table>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
                 </div>
-
-                <p class="text-center text-zinc-600 text-sm mt-4">
-                    {{ $this->standings->count() }} drivers
-                </p>
-            </div>
+            @endif
         @endif
-    </div>
+    </main>
 </div>
-

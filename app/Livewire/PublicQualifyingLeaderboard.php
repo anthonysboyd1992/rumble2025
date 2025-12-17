@@ -12,18 +12,29 @@ class PublicQualifyingLeaderboard extends Component
 {
     public ?int $classFilter = null;
     public string $dayFilter = 'friday';
-    public ?int $expandedDriver = null;
+    public array $expandedDrivers = [];
     public string $trackLength = '0.142857'; // 1/7 mile default
+    public bool $fullscreen = false;
 
     public function mount(): void
     {
         $firstClass = RaceClass::first();
         $this->classFilter = $firstClass?->id;
+        $this->fullscreen = request()->has('fullscreen');
+    }
+
+    public function toggleFullscreen(): void
+    {
+        $this->fullscreen = !$this->fullscreen;
     }
 
     public function toggleDriver(int $index): void
     {
-        $this->expandedDriver = $this->expandedDriver === $index ? null : $index;
+        if (in_array($index, $this->expandedDrivers)) {
+            $this->expandedDrivers = array_values(array_diff($this->expandedDrivers, [$index]));
+        } else {
+            $this->expandedDrivers[] = $index;
+        }
     }
 
     #[Computed]
@@ -84,18 +95,25 @@ class PublicQualifyingLeaderboard extends Component
                     }
                 ]);
                 
+                // Group times by session
+                $timesBySession = $sorted->groupBy('session')->map(function ($sessionTimes, $sessionName) use ($best) {
+                    return [
+                        'session' => $sessionName,
+                        'times' => $sessionTimes->map(fn($t) => [
+                            'time' => $t['time'],
+                            'lap' => $t['lap'] ?? null,
+                            'is_best' => $t['time'] === $best['time'],
+                        ])->values(),
+                    ];
+                })->values();
+
                 return [
                     'car_number' => $best['car_number'],
                     'driver_name' => $best['driver_name'],
                     'best_time' => $best['time'],
                     'session_name' => $best['session'],
                     'lap_count' => $driverTimes->count(),
-                    'all_times' => $sorted->map(fn($t) => [
-                        'session' => $t['session'],
-                        'time' => $t['time'],
-                        'lap' => $t['lap'] ?? null,
-                        'is_best' => $t['time'] === $best['time'],
-                    ])->values(),
+                    'times_by_session' => $timesBySession,
                 ];
             })
             ->sortBy(function ($standing) {

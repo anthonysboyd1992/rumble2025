@@ -7,30 +7,15 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     <style>
-        body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
-            min-height: 100vh;
-        }
-        .checkered-header {
-            background: repeating-linear-gradient(
-                90deg,
-                #000 0px,
-                #000 20px,
-                #fff 20px,
-                #fff 40px
-            );
-            height: 8px;
+        html, body {
+            background: #000 !important;
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
-<body class="text-white antialiased">
-    <div class="checkered-header"></div>
-
+<body class="text-white antialiased" style="background: #000;">
     <livewire:public-qualifying-leaderboard />
-
-    <div class="checkered-header"></div>
-
     @livewireScripts
 </body>
 </html>
-
