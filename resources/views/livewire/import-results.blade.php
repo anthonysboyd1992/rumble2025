@@ -23,6 +23,17 @@
             </div>
 
             <div>
+                <label class="block text-sm font-medium text-zinc-300 mb-2">Session Name (Optional)</label>
+                <input 
+                    type="text" 
+                    wire:model="sessionName" 
+                    placeholder="e.g., Heat 1, A-Main (auto-detected from paste)"
+                    class="w-full rumble-dark-bg-700 rumble-border rounded-lg px-4 py-2 text-white focus:ring-2" style="--tw-ring-color: hsl(206.07deg 75.92% 37.45%);" onfocus="this.style.borderColor='hsl(206.07deg 75.92% 37.45%)'" onblur="this.style.borderColor='hsl(312deg 7.69% 18%)'"
+                >
+                <p class="text-zinc-500 text-xs mt-1">Leave blank to auto-detect from pasted text</p>
+            </div>
+
+            <div>
                 <label class="block text-sm font-medium text-zinc-300 mb-2">Paste Results</label>
                 <textarea
                     wire:model="rawText"
@@ -61,4 +72,3 @@
         </div>
     @endif
 </div>
-

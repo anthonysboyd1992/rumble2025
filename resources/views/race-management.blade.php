@@ -44,6 +44,7 @@
             <div class="lg:col-span-1 space-y-8">
                 <livewire:manage-classes />
                 <livewire:import-results />
+                <livewire:manual-result-entry />
                 <livewire:reset-data />
             </div>
 

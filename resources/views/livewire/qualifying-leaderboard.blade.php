@@ -25,12 +25,21 @@
         <div class="space-y-3">
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold rumble-blue">Practice Times</h2>
-                <select wire:model.live="classFilter" class="rumble-dark-bg-700 rumble-border rounded-lg px-3 py-1.5 text-sm text-white">
-                    <option value="">All Classes</option>
+            </div>
+            
+            <div class="flex justify-center">
+                <div class="flex gap-2 flex-wrap">
                     @foreach($classes as $class)
-                        <option value="{{ $class->id }}">{{ $class->name }}</option>
+                        @if($class->show_on_practice)
+                            <button 
+                                wire:click="$set('classFilter', {{ $class->id }})"
+                                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $classFilter === $class->id ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
+                            >
+                                {{ $class->name }}
+                            </button>
+                        @endif
                     @endforeach
-                </select>
+                </div>
             </div>
             
             <div class="flex flex-wrap gap-2 items-center">
@@ -84,7 +93,7 @@
             <label class="text-zinc-400 text-sm">Top</label>
             <input 
                 type="number" 
-                wire:model.live="inversionCount" 
+                wire:model.live.debounce.500ms="inversionCount" 
                 min="2" 
                 max="50"
                 class="w-16 rumble-dark-bg rumble-border rounded px-2 py-1 text-white text-sm text-center"
@@ -182,8 +191,12 @@
                                                     @endif
                                                 </td>
                                                 <td class="py-1.5 pl-4 text-right">
-                                                    @if($time['source'] === 'crossing' && $time['id'])
-                                                        <button wire:click="deleteCrossing({{ $time['id'] }})" wire:confirm="Delete this time?" class="text-red-400 hover:text-red-300 text-xs">×</button>
+                                                    @if($time['id'])
+                                                        @if($time['source'] === 'crossing')
+                                                            <button wire:click="deleteCrossing({{ $time['id'] }})" wire:confirm="Delete this time?" class="text-red-400 hover:text-red-300 text-xs">×</button>
+                                                        @elseif($time['source'] === 'qualifying')
+                                                            <button wire:click="deleteQualifyingTime({{ $time['id'] }})" wire:confirm="Delete this time?" class="text-red-400 hover:text-red-300 text-xs">×</button>
+                                                        @endif
                                                     @endif
                                                 </td>
                                             </tr>

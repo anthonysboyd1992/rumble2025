@@ -1,14 +1,54 @@
 <div 
     x-data="{ 
         currentTime: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+        previousTimes: {},
         init() {
             setInterval(() => this.currentTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }), 1000);
+            this.storeCurrentTimes();
+            
+            Livewire.hook('morph.updated', ({ el, component }) => {
+                this.detectChanges();
+            });
+        },
+        storeCurrentTimes() {
+            document.querySelectorAll('[data-car-time]').forEach(el => {
+                const id = el.dataset.carId;
+                const time = el.dataset.carTime;
+                this.previousTimes[id] = time;
+            });
+        },
+        detectChanges() {
+            document.querySelectorAll('[data-car-time]').forEach(el => {
+                const id = el.dataset.carId;
+                const time = el.dataset.carTime;
+                if (this.previousTimes[id] && this.previousTimes[id] !== time) {
+                    el.classList.add('time-improved');
+                    setTimeout(() => el.classList.remove('time-improved'), 2000);
+                }
+            });
+            this.storeCurrentTimes();
         }
     }"
     wire:poll.2s
     class="min-h-screen flex flex-col"
     style="background: #000; color: #fff; font-family: 'Consolas', 'Monaco', monospace; font-size: 14px;"
 >
+    <style>
+        @keyframes timeFlash {
+            0% { background: #22c55e !important; color: #000 !important; }
+            100% { background: inherit; color: inherit; }
+        }
+        .time-improved {
+            animation: timeFlash 2s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        [data-car-time] {
+            animation: slideIn 0.3s ease-out;
+        }
+    </style>
     {{-- Header Bar --}}
     <header class="flex-none flex items-center justify-between px-4 py-1.5" style="background: #000; border-bottom: 1px solid #333;">
         <div class="flex items-center gap-4">
@@ -28,17 +68,15 @@
                 @endforeach
             </div>
 
-            @if($this->classes->count() > 1)
-                <div class="flex gap-1">
-                    @foreach($this->classes as $class)
-                        <button 
-                            wire:click="$set('classFilter', {{ $class->id }})"
-                            class="px-2.5 py-0.5 text-xs font-bold"
-                            style="{{ $classFilter === $class->id ? 'background: #22c55e; color: #000;' : 'background: #222; color: #555;' }}"
-                        >{{ $class->name }}</button>
-                    @endforeach
-                </div>
-            @endif
+            <div class="flex gap-1">
+                @foreach($this->classes as $class)
+                    <button 
+                        wire:click="$set('classFilter', {{ $class->id }})"
+                        class="px-2.5 py-0.5 text-xs font-bold"
+                        style="{{ $classFilter === $class->id ? 'background: #22c55e; color: #000;' : 'background: #222; color: #555;' }}"
+                    >{{ $class->name }}</button>
+                @endforeach
+            </div>
         </div>
         
         <div class="flex items-center gap-4">
@@ -84,6 +122,8 @@
                         @endphp
                         <div 
                             wire:click="toggleDriver({{ $index }})"
+                            data-car-id="{{ $standing['car_number'] }}"
+                            data-car-time="{{ $standing['best_time'] ?? '' }}"
                             class="flex items-center px-3 cursor-pointer hover:bg-zinc-900"
                             style="
                                 height: 32px;
@@ -123,6 +163,8 @@
                         @endphp
                         <div 
                             wire:click="toggleDriver({{ $realIndex }})"
+                            data-car-id="{{ $standing['car_number'] }}"
+                            data-car-time="{{ $standing['best_time'] ?? '' }}"
                             class="flex items-center px-3 cursor-pointer hover:bg-zinc-900"
                             style="
                                 height: 32px;

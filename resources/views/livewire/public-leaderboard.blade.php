@@ -1,157 +1,279 @@
 <div 
-    x-data="{}"
-    x-init="
+    x-data="{ 
+        currentTime: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+        previousData: {},
+        changedRows: [],
+        init() {
+            setInterval(() => this.currentTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }), 1000);
         if (typeof Echo !== 'undefined') {
             Echo.channel('standings').listen('.updated', () => $wire.$refresh());
-        }
-    "
-    wire:poll.5s
-    class="min-h-screen"
->
-    <div class="container mx-auto px-4 py-8">
-        <header class="text-center mb-8">
-            <x-rumble-logo />
-            <p class="text-lg rumble-text-muted mt-2">Standings</p>
+            }
+            this.storeCurrentData();
             
-            <div class="mt-4 flex justify-center gap-2 flex-wrap">
+            Livewire.hook('morph.updated', ({ el, component }) => {
+                this.detectChanges();
+            });
+        },
+        storeCurrentData() {
+            document.querySelectorAll('[data-driver-id]').forEach(el => {
+                const id = el.dataset.driverId;
+                const points = el.dataset.points;
+                this.previousData[id] = points;
+            });
+        },
+        detectChanges() {
+            this.changedRows = [];
+            document.querySelectorAll('[data-driver-id]').forEach(el => {
+                const id = el.dataset.driverId;
+                const points = el.dataset.points;
+                if (this.previousData[id] && this.previousData[id] !== points) {
+                    this.changedRows.push(id);
+                    el.classList.add('row-updated');
+                    setTimeout(() => {
+                        el.classList.remove('row-updated');
+                    }, 2000);
+                }
+            });
+            this.storeCurrentData();
+        }
+    }"
+    wire:poll.5s
+    class="min-h-screen flex flex-col"
+    style="background: #000; color: #fff; font-family: 'Consolas', 'Monaco', monospace; font-size: 14px;"
+>
+    <style>
+        @keyframes rowFlash {
+            0% { background: #22c55e !important; }
+            100% { background: inherit; }
+        }
+        .row-updated {
+            animation: rowFlash 2s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        [data-driver-id] {
+            animation: slideIn 0.3s ease-out;
+        }
+    </style>
+    {{-- Header Bar --}}
+    <header class="flex-none flex items-center justify-between px-4 py-1.5" style="background: #000; border-bottom: 1px solid #333;">
+        <div class="flex items-center gap-4">
+            <span style="color: #888;">Standings:</span>
+            <span class="font-bold" style="color: #fff;">{{ ucfirst($dayFilter ?: 'All Days') }}</span>
+            <span style="color: #333;">|</span>
+            <span style="color: #888;">Class:</span>
+            <span class="font-bold" style="color: #fff;">{{ $this->currentClassName }}</span>
+            
+            <div class="flex gap-1 ml-2">
+                @foreach(['thursday' => 'THU', 'friday' => 'FRI', 'saturday' => 'SAT'] as $day => $label)
                 <button 
-                    wire:click="$set('dayFilter', 'thursday')"
-                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $dayFilter === 'thursday' ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
-                >
-                    Thursday
-                </button>
-                <button 
-                    wire:click="$set('dayFilter', 'friday')"
-                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $dayFilter === 'friday' ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
-                >
-                    Friday
-                </button>
-                <button 
-                    wire:click="$set('dayFilter', 'saturday')"
-                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $dayFilter === 'saturday' ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
-                >
-                    Saturday
-                </button>
+                        wire:click="$set('dayFilter', '{{ $day }}')"
+                        class="px-2.5 py-0.5 text-xs font-bold"
+                        style="{{ $dayFilter === $day ? 'background: #22c55e; color: #000;' : 'background: #222; color: #555;' }}"
+                    >{{ $label }}</button>
+                @endforeach
                 <button 
                     wire:click="$set('dayFilter', '')"
-                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $dayFilter === '' ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
-                >
-                    All Days
-                </button>
+                    class="px-2.5 py-0.5 text-xs font-bold"
+                    style="{{ $dayFilter === '' ? 'background: #22c55e; color: #000;' : 'background: #222; color: #555;' }}"
+                >ALL</button>
             </div>
             
-            @if($this->classes->count() > 1)
-                <div class="mt-4 flex justify-center gap-2">
-                    @foreach($this->classes as $class)
-                        <button 
-                            wire:click="$set('classFilter', {{ $class->id }})"
-                            class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $classFilter === $class->id ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
-                        >
-                            {{ $class->name }}
-                        </button>
-                    @endforeach
-                </div>
-            @endif
+            <div class="flex gap-1">
+                @foreach($this->classes as $class)
+                    <button 
+                        wire:click="$set('classFilter', {{ $class->id }})"
+                        class="px-2.5 py-0.5 text-xs font-bold"
+                        style="{{ $classFilter === $class->id ? 'background: #22c55e; color: #000;' : 'background: #222; color: #555;' }}"
+                    >{{ $class->name }}</button>
+                @endforeach
+            </div>
+        </div>
             
-            <p class="text-xs text-zinc-600 mt-2">Live updates</p>
+        <div class="flex items-center gap-4">
+            <span style="color: #555;">{{ $this->standings->count() }} drivers</span>
+            <span class="text-lg font-bold" style="color: #fff;" x-text="currentTime"></span>
+        </div>
         </header>
 
+    {{-- Main Content --}}
+    <main class="flex-1 flex" style="background: #000;">
         @if($this->standings->isEmpty())
-            <div class="text-center py-16">
-                <p class="text-zinc-500 text-xl">No results yet.</p>
-                <p class="text-zinc-600 mt-2">Check back once qualifying begins!</p>
+            <div class="flex-1 flex items-center justify-center">
+                <div style="color: #444;">Waiting for results...</div>
             </div>
         @else
-            <div class="max-w-5xl mx-auto">
-                <div class="bg-zinc-900/80 rounded-xl border border-zinc-800 overflow-hidden">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-zinc-950 border-b-2 border-zinc-700">
-                                <th class="py-3 px-4 text-left text-xs font-bold uppercase text-zinc-400">Pos</th>
-                                <th class="py-3 px-4 text-left text-xs font-bold uppercase text-zinc-400">Car</th>
-                                <th class="py-3 px-4 text-left text-xs font-bold uppercase text-zinc-400">Driver</th>
-                                <th class="py-3 px-4 text-right text-xs font-bold uppercase text-zinc-400">Time</th>
-                                <th class="py-3 px-4 text-right text-xs font-bold uppercase text-zinc-400">Qual</th>
-                                <th class="py-3 px-4 text-right text-xs font-bold uppercase text-zinc-400">Heats</th>
-                                <th class="py-3 px-4 text-right text-xs font-bold uppercase text-zinc-400">A-Main</th>
-                                <th class="py-3 px-4 text-right text-xs font-bold uppercase text-zinc-400">Total</th>
-                                <th class="py-3 px-4 text-center text-xs font-bold uppercase text-zinc-400"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($this->standings as $index => $standing)
-                                <tr class="border-b border-zinc-800/50 {{ $index % 2 === 0 ? 'bg-zinc-900/50' : 'bg-zinc-900' }}">
-                                    <td class="py-4 px-4 text-zinc-400 font-bold text-lg">{{ $index + 1 }}</td>
-                                    <td class="py-4 px-4">
-                                        <span class="font-mono text-3xl rumble-blue font-bold">{{ $standing['entry']->car_number }}</span>
-                                    </td>
-                                    <td class="py-4 px-4 text-zinc-200 text-lg font-medium">{{ $standing['entry']->driver_name }}</td>
-                                    <td class="py-4 px-4 text-right font-mono text-zinc-500">{{ $standing['qualifying_time'] ?? '-' }}</td>
-                                    <td class="py-4 px-4 text-right {{ $standing['qualifying_status'] ?? false ? 'text-red-400' : 'text-zinc-400' }} font-semibold">
+            @php 
+                $leftColumn = $this->standings->take(20)->values();
+                $rightColumn = $this->standings->slice(20, 20)->values();
+            @endphp
+            
+            {{-- Timing Grid --}}
+            <div class="flex flex-1">
+                {{-- Left Column --}}
+                <div class="flex-1 flex flex-col" style="border-right: 1px solid #333;">
+                    <div class="flex items-center px-3 py-1" style="background: #111; color: #666; border-bottom: 1px solid #333; font-size: 11px;">
+                        <div style="width: 30px;">POS</div>
+                        <div style="flex: 1;">DRIVER</div>
+                        <div style="width: 70px; text-align: right;">TIME</div>
+                        <div style="width: 45px; text-align: right;">QUAL</div>
+                        <div style="width: 45px; text-align: right;">HEAT</div>
+                        <div style="width: 45px; text-align: right;">MAIN</div>
+                        <div style="width: 55px; text-align: right;">TOTAL</div>
+                    </div>
+                    
+                    @foreach($leftColumn as $index => $standing)
+                        @php $isExpanded = in_array($index, $expandedDrivers); @endphp
+                        <div 
+                            wire:click="toggleDriver({{ $index }})"
+                            data-driver-id="{{ $standing['entry']->car_number }}"
+                            data-points="{{ $standing['total_points'] }}"
+                            class="flex items-center px-3 cursor-pointer hover:bg-zinc-900"
+                            style="
+                                height: 32px;
+                                background: {{ $isExpanded ? '#1a1a1a' : ($index % 2 === 0 ? '#000' : '#080808') }};
+                                border-bottom: 1px solid #1a1a1a;
+                                border-left: 2px solid {{ $isExpanded ? '#22c55e' : ($index === 0 ? '#22c55e' : 'transparent') }};
+                            "
+                        >
+                            <div style="width: 30px; color: #fff; font-weight: bold;">{{ $index + 1 }}</div>
+                            <div style="flex: 1;" class="flex items-center gap-2 truncate">
+                                <span style="color: #22c55e; font-weight: bold;">#{{ $standing['entry']->car_number }}</span>
+                                <span style="color: #fff;" class="truncate">{{ strtoupper($standing['entry']->driver_name) }}</span>
+                            </div>
+                            <div style="width: 70px; text-align: right; color: #666; font-size: 11px;">{{ $standing['qualifying_time'] ?? '-' }}</div>
+                            <div style="width: 45px; text-align: right; color: {{ $standing['qualifying_status'] ?? false ? '#ef4444' : '#888' }};">
+                                {{ $standing['qualifying_status'] ?? $standing['qualifying_points'] ?? '' }}
+                            </div>
+                            <div style="width: 45px; text-align: right; color: {{ $standing['heat_status'] ?? false ? '#ef4444' : '#888' }};">
+                                {{ $standing['heat_status'] ?? $standing['heat_points'] ?? '' }}
+                            </div>
+                            <div style="width: 45px; text-align: right; color: {{ $standing['amain_status'] ?? false ? '#ef4444' : '#888' }};">
+                                {{ $standing['amain_status'] ?? $standing['amain_points'] ?? '' }}
+                            </div>
+                            <div style="width: 55px; text-align: right; color: #22c55e; font-weight: bold;">{{ $standing['total_points'] }}</div>
+                        </div>
+                    @endforeach
+                </div>
+                
+                {{-- Right Column --}}
+                <div class="flex-1 flex flex-col" style="border-right: 1px solid #333;">
+                    <div class="flex items-center px-3 py-1" style="background: #111; color: #666; border-bottom: 1px solid #333; font-size: 11px;">
+                        <div style="width: 30px;">POS</div>
+                        <div style="flex: 1;">DRIVER</div>
+                        <div style="width: 70px; text-align: right;">TIME</div>
+                        <div style="width: 45px; text-align: right;">QUAL</div>
+                        <div style="width: 45px; text-align: right;">HEAT</div>
+                        <div style="width: 45px; text-align: right;">MAIN</div>
+                        <div style="width: 55px; text-align: right;">TOTAL</div>
+                    </div>
+                    
+                    @foreach($rightColumn as $index => $standing)
+                        @php 
+                            $realIndex = $index + 20;
+                            $isExpanded = in_array($realIndex, $expandedDrivers);
+                        @endphp
+                        <div 
+                            wire:click="toggleDriver({{ $realIndex }})"
+                            data-driver-id="{{ $standing['entry']->car_number }}"
+                            data-points="{{ $standing['total_points'] }}"
+                            class="flex items-center px-3 cursor-pointer hover:bg-zinc-900"
+                            style="
+                                height: 32px;
+                                background: {{ $isExpanded ? '#1a1a1a' : ($index % 2 === 0 ? '#000' : '#080808') }};
+                                border-bottom: 1px solid #1a1a1a;
+                                border-left: 2px solid {{ $isExpanded ? '#22c55e' : 'transparent' }};
+                            "
+                        >
+                            <div style="width: 30px; color: #fff; font-weight: bold;">{{ $realIndex + 1 }}</div>
+                            <div style="flex: 1;" class="flex items-center gap-2 truncate">
+                                <span style="color: #22c55e; font-weight: bold;">#{{ $standing['entry']->car_number }}</span>
+                                <span style="color: #fff;" class="truncate">{{ strtoupper($standing['entry']->driver_name) }}</span>
+                            </div>
+                            <div style="width: 70px; text-align: right; color: #666; font-size: 11px;">{{ $standing['qualifying_time'] ?? '-' }}</div>
+                            <div style="width: 45px; text-align: right; color: {{ $standing['qualifying_status'] ?? false ? '#ef4444' : '#888' }};">
                                         {{ $standing['qualifying_status'] ?? $standing['qualifying_points'] ?? '' }}
-                                    </td>
-                                    <td class="py-4 px-4 text-right {{ $standing['heat_status'] ?? false ? 'text-red-400' : 'text-zinc-400' }} font-semibold">
+                            </div>
+                            <div style="width: 45px; text-align: right; color: {{ $standing['heat_status'] ?? false ? '#ef4444' : '#888' }};">
                                         {{ $standing['heat_status'] ?? $standing['heat_points'] ?? '' }}
-                                    </td>
-                                    <td class="py-4 px-4 text-right {{ $standing['amain_status'] ?? false ? 'text-red-400' : 'text-zinc-400' }} font-semibold">
+                            </div>
+                            <div style="width: 45px; text-align: right; color: {{ $standing['amain_status'] ?? false ? '#ef4444' : '#888' }};">
                                         {{ $standing['amain_status'] ?? $standing['amain_points'] ?? '' }}
-                                    </td>
-                                    <td class="py-4 px-4 text-right text-green-400 font-bold text-xl">{{ $standing['total_points'] }}</td>
-                                    <td class="py-4 px-4">
+                            </div>
+                            <div style="width: 55px; text-align: right; color: #22c55e; font-weight: bold;">{{ $standing['total_points'] }}</div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            
+            {{-- Side Panel for Expanded Drivers --}}
+            @if(count($expandedDrivers) > 0)
+                <div class="flex flex-col overflow-y-auto" style="width: 320px; background: #0a0a0a; border-left: 1px solid #333;">
+                    <div class="px-3 py-2" style="background: #111; border-bottom: 1px solid #333;">
+                        <span style="color: #666; font-size: 11px;">POINTS BREAKDOWN</span>
+                    </div>
+                    
+                    <div class="flex-1 overflow-y-auto">
+                        @foreach($expandedDrivers as $driverIndex)
+                            @php
+                                $standing = $this->standings[$driverIndex] ?? null;
+                            @endphp
+                            @if($standing)
+                                <div style="border-bottom: 1px solid #222; padding: 10px;">
+                                    {{-- Driver header --}}
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-2">
+                                            <span style="color: #22c55e; font-weight: bold;">#{{ $standing['entry']->car_number }}</span>
+                                            <span style="color: #fff; font-weight: bold;">{{ strtoupper($standing['entry']->driver_name) }}</span>
+                                        </div>
                                         <button 
-                                            wire:click="toggleDriver({{ $index }})"
-                                            class="text-zinc-400 hover:text-zinc-200 transition-colors"
-                                        >
-                                            <svg class="w-5 h-5 transition-transform {{ $expandedDriver === $index ? 'rotate-180' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                                @if($expandedDriver === $index)
-                                    <tr class="{{ $index % 2 === 0 ? 'bg-zinc-900/50' : 'bg-zinc-900' }}">
-                                        <td colspan="9" class="py-4 px-4">
-                                            <div class="bg-zinc-950 rounded-lg p-4 border border-zinc-800">
-                                                <h4 class="text-zinc-400 text-sm font-semibold mb-3 uppercase">Points Breakdown</h4>
-                                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                            wire:click="toggleDriver({{ $driverIndex }})"
+                                            style="color: #555; font-size: 16px;"
+                                        >&times;</button>
+                                    </div>
+                                    
+                                    {{-- Points summary --}}
+                                    <div class="flex gap-4 mb-2 text-xs" style="color: #666;">
+                                        <span>Qual: <span style="color: #888;">{{ $standing['qualifying_points'] ?? 0 }}</span></span>
+                                        <span>Heat: <span style="color: #888;">{{ $standing['heat_points'] ?? 0 }}</span></span>
+                                        <span>Main: <span style="color: #888;">{{ $standing['amain_points'] ?? 0 }}</span></span>
+                                        <span>Total: <span style="color: #22c55e; font-weight: bold;">{{ $standing['total_points'] }}</span></span>
+                                    </div>
+                                    
+                                    {{-- Results cards --}}
+                                    <div class="flex flex-col gap-2">
                                                     @foreach($standing['all_results'] ?? [] as $result)
-                                                        <div class="bg-zinc-900 rounded-lg p-3 border border-zinc-800">
-                                                            <div class="flex justify-between items-center mb-1">
-                                                                <span class="text-zinc-400 text-xs font-medium">{{ $result['session_name'] }}</span>
-                                                                <span class="text-zinc-600 text-xs uppercase">{{ $result['session_type'] }}</span>
+                                            <div style="background: #151515; border: 1px solid #2a2a2a; border-radius: 4px; padding: 6px 8px;">
+                                                <div class="flex items-center justify-between" style="font-size: 11px;">
+                                                    <div>
+                                                        <span style="color: #22c55e;">{{ $result['session_name'] }}</span>
+                                                        <span style="color: #444; margin-left: 4px;">{{ $result['session_type'] }}</span>
+                                                    </div>
+                                                    <span style="color: #22c55e; font-weight: bold;">{{ $result['points'] }} pts</span>
                                                             </div>
-                                                            <div class="flex justify-between items-center">
-                                                                <div>
+                                                <div class="flex items-center justify-between mt-1" style="font-size: 12px;">
                                                                     @if($result['is_dns'])
-                                                                        <span class="text-red-400 font-semibold">DNS</span>
+                                                        <span style="color: #ef4444;">DNS</span>
                                                                     @elseif($result['is_dnf'])
-                                                                        <span class="text-red-400 font-semibold">DQ</span>
+                                                        <span style="color: #ef4444;">DQ</span>
                                                                     @else
-                                                                        <span class="text-zinc-300">Pos {{ $result['position'] }}</span>
+                                                        <span style="color: #888;">Position {{ $result['position'] }}</span>
                                                                     @endif
-                                                                </div>
-                                                                <span class="text-green-400 font-bold text-lg">{{ $result['points'] }}</span>
-                                                            </div>
                                                             @if($result['time'])
-                                                                <div class="text-zinc-500 text-xs mt-1 font-mono">{{ $result['time'] }}</div>
+                                                        <span style="color: #555;">{{ $result['time'] }}</span>
                                                             @endif
-                                                        </div>
-                                                    @endforeach
                                                 </div>
                                             </div>
-                                        </td>
-                                    </tr>
+                                        @endforeach
+                                    </div>
+                                </div>
                                 @endif
                             @endforeach
-                        </tbody>
-                    </table>
+                    </div>
                 </div>
-
-                <p class="text-center text-zinc-600 text-sm mt-4">
-                    {{ $this->standings->count() }} entries
-                </p>
-            </div>
+            @endif
         @endif
-    </div>
+    </main>
 </div>
-

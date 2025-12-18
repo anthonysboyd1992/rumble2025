@@ -44,6 +44,7 @@
             <div class="lg:col-span-1 space-y-8">
                 <livewire:manage-classes />
                 <livewire:crossing-import />
+                <livewire:manual-time-entry />
                 <livewire:reset-qualifying />
             </div>
 

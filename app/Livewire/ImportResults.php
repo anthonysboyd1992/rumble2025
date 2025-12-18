@@ -15,9 +15,17 @@ class ImportResults extends Component
     {
         // Will re-render with updated classes
     }
+
+    #[On('day-changed')]
+    public function updateDay(string $day): void
+    {
+        $this->day = $day;
+    }
+
     public string $rawText = '';
     public ?int $raceClassId = null;
     public string $day = 'friday';
+    public string $sessionName = '';
     public array $importedResults = [];
     public string $message = '';
 

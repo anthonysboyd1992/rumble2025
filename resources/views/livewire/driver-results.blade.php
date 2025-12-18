@@ -38,33 +38,41 @@
                             @else
                                 <table class="w-full text-sm">
                                     <thead>
-                                        <tr class="text-left text-xs uppercase text-zinc-500 border-b border-zinc-800">
-                                            <th class="pb-2 pr-4">Session</th>
-                                            <th class="pb-2 pr-4 text-right">Pos</th>
-                                            <th class="pb-2 pr-4 text-right">Start</th>
-                                            <th class="pb-2 pr-4 text-right">Time</th>
-                                            <th class="pb-2 text-right">Points</th>
-                                        </tr>
+<tr class="text-left text-xs uppercase text-zinc-500 border-b border-zinc-800">
+                                                            <th class="pb-2 pr-4">Session</th>
+                                                            <th class="pb-2 pr-4 text-right">Pos</th>
+                                                            <th class="pb-2 pr-4 text-right">Start</th>
+                                                            <th class="pb-2 pr-4 text-right">Time</th>
+                                                            <th class="pb-2 text-right">Points</th>
+                                                            <th class="pb-2 pl-4 text-right"></th>
+                                                        </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($entry->results->sortBy('session.name') as $result)
-                                            <tr class="border-b border-zinc-800/50">
-                                                <td class="py-2 pr-4 text-zinc-200">{{ $result->session->name }}</td>
-                                                <td class="py-2 pr-4 text-right {{ $result->is_dns ? 'text-red-400' : ($result->is_dnf ? 'text-red-400' : 'text-zinc-200') }}">
-                                                    @if($result->is_dns)
-                                                        DNS
-                                                    @elseif($result->is_dnf)
-                                                        DQ
-                                                    @else
-                                                        {{ $result->position }}
-                                                    @endif
-                                                </td>
-                                                <td class="py-2 pr-4 text-right text-zinc-400">{{ $result->starting_position ?? '-' }}</td>
-                                                <td class="py-2 pr-4 text-right font-mono text-zinc-500">{{ $result->time ?? '-' }}</td>
-                                                <td class="py-2 text-right {{ $result->points_earned > 0 ? 'text-green-400' : 'text-red-400' }} font-bold">
-                                                    {{ $result->points_earned }}
-                                                </td>
-                                            </tr>
+<tr class="border-b border-zinc-800/50">
+                                                                <td class="py-2 pr-4 text-zinc-200">{{ $result->session->name }}</td>
+                                                                <td class="py-2 pr-4 text-right {{ $result->is_dns ? 'text-red-400' : ($result->is_dnf ? 'text-red-400' : 'text-zinc-200') }}">
+                                                                    @if($result->is_dns)
+                                                                        DNS
+                                                                    @elseif($result->is_dnf)
+                                                                        DQ
+                                                                    @else
+                                                                        {{ $result->position }}
+                                                                    @endif
+                                                                </td>
+                                                                <td class="py-2 pr-4 text-right text-zinc-400">{{ $result->starting_position ?? '-' }}</td>
+                                                                <td class="py-2 pr-4 text-right font-mono text-zinc-500">{{ $result->time ?? '-' }}</td>
+                                                                <td class="py-2 text-right {{ $result->points_earned > 0 ? 'text-green-400' : 'text-red-400' }} font-bold">
+                                                                    {{ $result->points_earned }}
+                                                                </td>
+                                                                <td class="py-2 pl-4 text-right">
+                                                                    <button 
+                                                                        wire:click="deleteResult({{ $result->id }})"
+                                                                        wire:confirm="Delete this result?"
+                                                                        class="text-red-400 hover:text-red-300 text-xs"
+                                                                    >&times;</button>
+                                                                </td>
+                                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>

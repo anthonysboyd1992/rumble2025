@@ -2,8 +2,10 @@
 
 namespace App\Livewire;
 
+use App\Events\StandingsUpdated;
 use App\Models\Entry;
 use App\Models\RaceClass;
+use App\Models\Result;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -21,6 +23,13 @@ class DriverResults extends Component
     public function selectDriver(int $entryId): void
     {
         $this->selectedEntryId = $this->selectedEntryId === $entryId ? null : $entryId;
+    }
+
+    public function deleteResult(int $resultId): void
+    {
+        Result::find($resultId)?->delete();
+        $this->dispatch('results-imported');
+        event(new StandingsUpdated());
     }
 
     public function render()

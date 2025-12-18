@@ -14,13 +14,28 @@ class Standings extends Component
     public bool $inversionEnabled = false;
     public int $inversionCount = 12;
 
+    public function updatedInversionCount($value): void
+    {
+        if (empty($value) || $value < 1) {
+            $this->inversionCount = 1;
+        }
+    }
+
     public function mount(): void
     {
-        // Auto-select "midgets" class if it exists
-        $midgetsClass = \App\Models\RaceClass::where('name', 'LIKE', '%midget%')->first();
-        if ($midgetsClass) {
-            $this->classFilter = $midgetsClass->id;
+        // Auto-select first class with leaderboard enabled
+        $firstClass = RaceClass::where('show_on_leaderboard', true)
+            ->orderBy('sort_order')
+            ->first();
+        if ($firstClass) {
+            $this->classFilter = $firstClass->id;
         }
+        $this->dispatch('day-changed', day: $this->dayFilter);
+    }
+
+    public function updatedDayFilter(): void
+    {
+        $this->dispatch('day-changed', day: $this->dayFilter);
     }
 
     #[On('results-imported')]

@@ -34,6 +34,10 @@ class PublicQualifyingLeaderboard extends Component
             $this->expandedDrivers = array_values(array_diff($this->expandedDrivers, [$index]));
         } else {
             $this->expandedDrivers[] = $index;
+            // Limit to 5 expanded drivers max
+            if (count($this->expandedDrivers) > 3) {
+                array_shift($this->expandedDrivers);
+            }
         }
     }
 
@@ -127,7 +131,10 @@ class PublicQualifyingLeaderboard extends Component
     #[Computed]
     public function classes()
     {
-        return RaceClass::orderBy('sort_order')->orderBy('name')->get();
+        return RaceClass::where('show_on_practice', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
     }
 
     #[Computed]

@@ -67,6 +67,11 @@ class LineupGenerator
                 $results = $results->filter(fn($r) => $r->session->day === $day);
             }
 
+            // Skip entries with no results for this day
+            if ($results->isEmpty()) {
+                return null;
+            }
+
             $qualifyingResult = $results->first(fn($r) => $r->session->type === 'qualifying');
             $qualifyingPoints = $results->filter(fn($r) => $r->session->type === 'qualifying')->sum('points_earned');
             $heatPoints = $results->filter(fn($r) => $r->session->type === 'heat')->sum('points_earned');
@@ -104,7 +109,7 @@ class LineupGenerator
                     'time' => $r->time,
                 ])->sortBy('session.name')->values(),
             ];
-        })->sort(function ($a, $b) {
+        })->filter()->sort(function ($a, $b) {
             // Primary: total points descending
             if ($a['total_points'] !== $b['total_points']) {
                 return $b['total_points'] - $a['total_points'];

@@ -7,11 +7,12 @@
 
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <!-- Race Management -->
-            <a href="{{ route('race-management') }}" class="group block p-6 rounded-xl rumble-card rumble-card-hover transition-all">
+            <a href="{{ route('race-management') }}" class="group block p-6 rounded-xl border border-zinc-700 bg-zinc-800/50 hover:border-yellow-500 hover:bg-zinc-800 transition-all">
                 <div class="flex items-center gap-4">
-                    <div class="p-3 rounded-lg rumble-blue-bg-light rumble-blue group-hover:rumble-blue-bg" style="opacity: 0.2;">
+                    <div class="p-3 rounded-lg bg-yellow-500/10 text-yellow-400 group-hover:bg-yellow-500/20">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3"></path>
                         </svg>
                     </div>
                     <div>

@@ -3,41 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUMBLE in Fort Wayne - Leaderboard</title>
+    <title>RUMBLE in Fort Wayne - Standings</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     <style>
-        body {
-            background: hsl(312deg 7.69% 8%);
-            min-height: 100vh;
-        }
-        .checkered-header {
-            background: repeating-linear-gradient(
-                90deg,
-                #000 0px,
-                #000 20px,
-                #fff 20px,
-                #fff 40px
-            );
-            height: 8px;
+        html, body {
+            background: #000 !important;
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
-<body class="text-white antialiased">
-    <div class="checkered-header"></div>
-
+<body class="text-white antialiased" style="background: #000;">
     <livewire:public-leaderboard />
-
-    <div class="checkered-header"></div>
-
     @livewireScripts
-    <script>
-        // Check if Echo/Pusher is configured, otherwise rely on polling
-        window.Echo = window.Echo || null;
-    </script>
-    @if(config('broadcasting.default') === 'pusher')
-        @vite(['resources/js/echo.js'])
-    @endif
 </body>
 </html>
-

@@ -39,6 +39,16 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
                             </svg>
                             <span class="text-zinc-200">{{ $class->name }}</span>
+                            <div class="flex gap-2 ml-2">
+                                <label class="flex items-center gap-1 text-xs {{ $class->show_on_leaderboard ? 'text-green-400' : 'text-zinc-500' }}">
+                                    <input type="checkbox" wire:click="toggleVisibility({{ $class->id }}, 'leaderboard')" {{ $class->show_on_leaderboard ? 'checked' : '' }} class="w-3 h-3">
+                                    LB
+                                </label>
+                                <label class="flex items-center gap-1 text-xs {{ $class->show_on_practice ? 'text-green-400' : 'text-zinc-500' }}">
+                                    <input type="checkbox" wire:click="toggleVisibility({{ $class->id }}, 'practice')" {{ $class->show_on_practice ? 'checked' : '' }} class="w-3 h-3">
+                                    PT
+                                </label>
+                            </div>
                         </div>
                         <div class="flex gap-2">
                             <button wire:click="edit({{ $class->id }})" class="text-zinc-400 hover:rumble-blue text-sm" style="--hover-color: hsl(206.07deg 75.92% 37.45%);" onmouseover="this.style.color='hsl(206.07deg 75.92% 37.45%)'" onmouseout="this.style.color='rgb(163, 163, 163)'">Edit</button>

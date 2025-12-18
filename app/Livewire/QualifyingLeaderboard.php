@@ -19,6 +19,13 @@ class QualifyingLeaderboard extends Component
     public int $inversionCount = 12;
     public bool $fullInvert = false;
 
+    public function updatedInversionCount($value): void
+    {
+        if (empty($value) || $value < 1) {
+            $this->inversionCount = 1;
+        }
+    }
+
     public function mount(): void
     {
         $this->dispatch('day-changed', day: $this->dayFilter);
@@ -44,6 +51,13 @@ class QualifyingLeaderboard extends Component
     public function deleteCrossing(int $id): void
     {
         CrossingTime::find($id)?->delete();
+        $this->dispatch('qualifying-imported');
+    }
+
+    public function deleteQualifyingTime(int $id): void
+    {
+        QualifyingTime::find($id)?->delete();
+        $this->dispatch('qualifying-imported');
     }
 
     public function toggleInversion(): void
@@ -72,10 +86,12 @@ class QualifyingLeaderboard extends Component
         }
         $qualifyingQuery->where('day', $this->dayFilter);
         $qualifyingTimes = $qualifyingQuery->get()->map(fn($t) => [
+            'id' => $t->id,
             'car_number' => $t->car_number,
             'driver_name' => $t->driver_name,
             'time' => $t->fast_time,
             'session' => $t->session_name,
+            'lap' => $t->fast_lap,
             'source' => 'qualifying',
         ]);
 

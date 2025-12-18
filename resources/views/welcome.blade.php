@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
-<head>
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RUMBLE in Fort Wayne 2025</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
+        <style>
         body {
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
             min-height: 100vh;
         }
-    </style>
-</head>
+        </style>
+    </head>
 <body class="text-white antialiased flex items-center justify-center min-h-screen">
     <div class="text-center px-6">
         <x-rumble-logo class="mx-auto mb-8" />
@@ -24,7 +24,7 @@
                 href="{{ route('leaderboard') }}" 
                 class="px-8 py-4 rounded-lg text-lg font-semibold transition-all rumble-blue-bg text-white hover:opacity-90"
             >
-                Standings
+                Leaderboard
             </a>
             <a 
                 href="{{ route('qualifying-leaderboard') }}" 
@@ -33,7 +33,7 @@
                 Live Timing
             </a>
         </div>
-        
+
         @auth
             <div class="mt-12">
                 <a href="{{ route('dashboard') }}" class="text-zinc-500 hover:text-white transition-colors">
@@ -48,5 +48,5 @@
             </div>
         @endauth
     </div>
-</body>
+    </body>
 </html>

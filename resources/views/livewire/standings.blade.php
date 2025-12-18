@@ -1,25 +1,60 @@
 <div class="rumble-dark-bg rounded-xl p-6 rumble-border">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold rumble-blue">Standings</h2>
-        <div class="flex gap-3 items-center">
-            <select wire:model.live="dayFilter" class="rumble-dark-bg-700 rumble-border rounded-lg px-3 py-1.5 text-sm text-white">
-                <option value="thursday">Thursday</option>
-                <option value="friday">Friday</option>
-                <option value="saturday">Saturday</option>
-                <option value="">All Days</option>
-            </select>
-            <select wire:model.live="classFilter" class="rumble-dark-bg-700 rumble-border rounded-lg px-3 py-1.5 text-sm text-white">
-                <option value="">All Classes</option>
-                @foreach($classes as $class)
-                    <option value="{{ $class->id }}">{{ $class->name }}</option>
-                @endforeach
-            </select>
-            <a href="{{ route('print.standings', ['day' => $dayFilter ?: null, 'class' => $classFilter]) }}" target="_blank" class="rumble-dark-bg-700 rumble-dark-bg-hover text-white text-sm px-3 py-1.5 rounded-lg transition-colors">
-                Print
-            </a>
-            <a href="{{ route('export.standings', ['day' => $dayFilter ?: null, 'class' => $classFilter]) }}" class="rumble-dark-bg-700 rumble-dark-bg-hover text-white text-sm px-3 py-1.5 rounded-lg transition-colors">
-                CSV
-            </a>
+    <div class="mb-6">
+        <div class="flex justify-center mb-4">
+            <div class="flex gap-2">
+                <button 
+                    wire:click="$set('dayFilter', 'thursday')"
+                    class="px-6 py-2 rounded-lg text-sm font-medium transition-colors {{ $dayFilter === 'thursday' ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
+                >
+                    Thursday
+                </button>
+                <button 
+                    wire:click="$set('dayFilter', 'friday')"
+                    class="px-6 py-2 rounded-lg text-sm font-medium transition-colors {{ $dayFilter === 'friday' ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
+                >
+                    Friday
+                </button>
+                <button 
+                    wire:click="$set('dayFilter', 'saturday')"
+                    class="px-6 py-2 rounded-lg text-sm font-medium transition-colors {{ $dayFilter === 'saturday' ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
+                >
+                    Saturday
+                </button>
+            </div>
+        </div>
+        <div class="space-y-3">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold rumble-blue">Results</h2>
+            </div>
+            
+            <div class="flex justify-center">
+                <div class="flex gap-2 flex-wrap">
+                    @foreach($classes as $class)
+                        @if($class->show_on_leaderboard)
+                            <button 
+                                wire:click="$set('classFilter', {{ $class->id }})"
+                                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors {{ $classFilter === $class->id ? 'rumble-blue-bg text-white' : 'rumble-dark-bg-700 text-white rumble-dark-bg-hover' }}"
+                            >
+                                {{ $class->name }}
+                            </button>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 items-center">
+                <span class="text-zinc-400 text-sm font-medium mr-2">Print:</span>
+                <a href="{{ route('print.standings', ['day' => $dayFilter ?: null, 'class' => $classFilter]) }}" target="_blank" class="rumble-dark-bg-700 rumble-dark-bg-hover text-white text-sm px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+                    Standings
+                </a>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 items-center">
+                <span class="text-zinc-400 text-sm font-medium mr-2">CSV:</span>
+                <a href="{{ route('export.standings', ['day' => $dayFilter ?: null, 'class' => $classFilter]) }}" class="rumble-dark-bg-700 rumble-dark-bg-hover text-white text-sm px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+                    Standings
+                </a>
+            </div>
         </div>
     </div>
 
@@ -34,7 +69,7 @@
             <label class="text-zinc-400 text-sm">Top</label>
             <input 
                 type="number" 
-                wire:model.live="inversionCount" 
+                wire:model.live.debounce.500ms="inversionCount" 
                 min="2" 
                 max="50"
                 class="w-16 bg-zinc-700 border border-zinc-600 rounded px-2 py-1 text-white text-sm text-center"

@@ -59,6 +59,17 @@ class ManageClasses extends Component
         $this->dispatch('classes-updated');
     }
 
+    public function toggleVisibility(int $id, string $type): void
+    {
+        $class = RaceClass::find($id);
+        if ($type === 'leaderboard') {
+            $class->update(['show_on_leaderboard' => !$class->show_on_leaderboard]);
+        } else {
+            $class->update(['show_on_practice' => !$class->show_on_practice]);
+        }
+        $this->dispatch('classes-updated');
+    }
+
     public function render()
     {
         return view('livewire.manage-classes', [
