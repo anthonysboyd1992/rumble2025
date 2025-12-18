@@ -144,6 +144,7 @@
                             <span class="text-zinc-200">{{ $standing['driver_name'] }}</span>
                         </div>
                         <div class="flex items-center gap-4">
+                            <span class="text-zinc-500 text-xs">{{ $standing['session_name'] }}</span>
                             <span class="text-zinc-400 text-sm">{{ $standing['lap_count'] }} times</span>
                             <span class="font-mono text-green-400 font-bold">{{ \App\Helpers\TimeFormatter::format($standing['best_time']) }}</span>
                             @php

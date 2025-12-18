@@ -5,7 +5,8 @@
             <p class="rumble-text-muted mt-2">Race Management Dashboard</p>
         </div>
 
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <!-- Primary Actions -->
+        <div class="grid gap-4 md:grid-cols-2">
             <!-- Race Management -->
             <a href="{{ route('race-management') }}" class="group block p-6 rounded-xl border border-zinc-700 bg-zinc-800/50 hover:border-yellow-500 hover:bg-zinc-800 transition-all">
                 <div class="flex items-center gap-4">
@@ -22,6 +23,24 @@
                 </div>
             </a>
 
+            <!-- Practice Times -->
+            <a href="{{ route('qualifying') }}" class="group block p-6 rounded-xl border border-zinc-700 bg-zinc-800/50 hover:border-orange-500 hover:bg-zinc-800 transition-all">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 rounded-lg bg-orange-500/10 text-orange-400 group-hover:bg-orange-500/20">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-zinc-100">Practice Times</h2>
+                        <p class="text-zinc-400 text-sm">Import CSV, track fastest times</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Secondary Actions -->
+        <div class="grid gap-4 md:grid-cols-3">
             <!-- Public Leaderboard -->
             <a href="{{ route('leaderboard') }}" target="_blank" class="group block p-6 rounded-xl border border-zinc-700 bg-zinc-800/50 hover:border-green-500 hover:bg-zinc-800 transition-all">
                 <div class="flex items-center gap-4">
@@ -48,51 +67,6 @@
                     <div>
                         <h2 class="text-xl font-bold text-zinc-100">Qualifying Leaderboard</h2>
                         <p class="text-zinc-400 text-sm">Live qualifying times for spectators</p>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Print Standings -->
-            <a href="{{ route('print.standings', ['day' => 'friday']) }}" target="_blank" class="group block p-6 rounded-xl border border-zinc-700 bg-zinc-800/50 hover:border-blue-500 hover:bg-zinc-800 transition-all">
-                <div class="flex items-center gap-4">
-                    <div class="p-3 rounded-lg bg-blue-500/10 text-blue-400 group-hover:bg-blue-500/20">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-zinc-100">Print Standings</h2>
-                        <p class="text-zinc-400 text-sm">Print-friendly standings page</p>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Export CSV -->
-            <a href="{{ route('export.standings', ['day' => 'friday']) }}" class="group block p-6 rounded-xl border border-zinc-700 bg-zinc-800/50 hover:border-purple-500 hover:bg-zinc-800 transition-all">
-                <div class="flex items-center gap-4">
-                    <div class="p-3 rounded-lg bg-purple-500/10 text-purple-400 group-hover:bg-purple-500/20">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-zinc-100">Export CSV</h2>
-                        <p class="text-zinc-400 text-sm">Download standings as spreadsheet</p>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Practice Times -->
-            <a href="{{ route('qualifying') }}" class="group block p-6 rounded-xl border border-zinc-700 bg-zinc-800/50 hover:border-orange-500 hover:bg-zinc-800 transition-all">
-                <div class="flex items-center gap-4">
-                    <div class="p-3 rounded-lg bg-orange-500/10 text-orange-400 group-hover:bg-orange-500/20">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-zinc-100">Practice Times</h2>
-                        <p class="text-zinc-400 text-sm">Import CSV, track fastest times</p>
                     </div>
                 </div>
             </a>

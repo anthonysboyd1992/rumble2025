@@ -109,6 +109,7 @@
                     <div class="flex items-center px-3 py-1" style="background: #111; color: #666; border-bottom: 1px solid #333; font-size: 11px;">
                         <div style="width: 30px;">POS</div>
                         <div style="flex: 1;">DRIVER</div>
+                        <div style="width: 70px; text-align: center;">FASTEST</div>
                         <div style="width: 40px; text-align: center;">LAPS</div>
                         <div style="width: 90px; text-align: right;">BEST</div>
                         <div style="width: 80px; text-align: right;">DIFF</div>
@@ -137,6 +138,7 @@
                                 <span style="color: #22c55e; font-weight: bold;">#{{ $standing['car_number'] }}</span>
                                 <span style="color: #fff;" class="truncate">{{ strtoupper($standing['driver_name']) }}</span>
                             </div>
+                            <div style="width: 70px; text-align: center; color: #666; font-size: 10px;">{{ $standing['session_name'] ?? '' }}</div>
                             <div style="width: 40px; text-align: center; color: #22c55e;">{{ $standing['lap_count'] }}</div>
                             <div style="width: 90px; text-align: right; color: #22c55e; font-weight: bold;">{{ \App\Helpers\TimeFormatter::format($standing['best_time']) }}</div>
                             <div style="width: 80px; text-align: right; color: #888;">{{ $gap ?? '' }}</div>
@@ -149,6 +151,7 @@
                     <div class="flex items-center px-3 py-1" style="background: #111; color: #666; border-bottom: 1px solid #333; font-size: 11px;">
                         <div style="width: 30px;">POS</div>
                         <div style="flex: 1;">DRIVER</div>
+                        <div style="width: 70px; text-align: center;">FASTEST</div>
                         <div style="width: 40px; text-align: center;">LAPS</div>
                         <div style="width: 90px; text-align: right;">BEST</div>
                         <div style="width: 80px; text-align: right;">DIFF</div>
@@ -178,6 +181,7 @@
                                 <span style="color: #22c55e; font-weight: bold;">#{{ $standing['car_number'] }}</span>
                                 <span style="color: #fff;" class="truncate">{{ strtoupper($standing['driver_name']) }}</span>
                             </div>
+                            <div style="width: 70px; text-align: center; color: #666; font-size: 10px;">{{ $standing['session_name'] ?? '' }}</div>
                             <div style="width: 40px; text-align: center; color: #22c55e;">{{ $standing['lap_count'] }}</div>
                             <div style="width: 90px; text-align: right; color: #22c55e; font-weight: bold;">{{ \App\Helpers\TimeFormatter::format($standing['best_time']) }}</div>
                             <div style="width: 80px; text-align: right; color: #888;">{{ $gap }}</div>
