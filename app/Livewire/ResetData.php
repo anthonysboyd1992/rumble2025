@@ -25,9 +25,11 @@ class ResetData extends Component
 
     public function clearAllData(): void
     {
+        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Result::truncate();
         Session::truncate();
         Entry::truncate();
+        \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $this->showConfirm = false;
         $this->message = 'All race data has been cleared.';

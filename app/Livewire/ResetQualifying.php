@@ -23,8 +23,10 @@ class ResetQualifying extends Component
 
     public function clearAllData(): void
     {
+        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         QualifyingTime::truncate();
         CrossingTime::truncate();
+        \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $this->showConfirm = false;
         $this->message = 'All qualifying and crossing times have been cleared.';
