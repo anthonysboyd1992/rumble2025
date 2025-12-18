@@ -23,10 +23,22 @@ class ResetQualifying extends Component
 
     public function clearAllData(): void
     {
-        \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        $driver = \DB::connection()->getDriverName();
+        
+        if ($driver === 'mysql') {
+            \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        } elseif ($driver === 'sqlite') {
+            \DB::statement('PRAGMA foreign_keys = OFF;');
+        }
+        
         QualifyingTime::truncate();
         CrossingTime::truncate();
-        \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        
+        if ($driver === 'mysql') {
+            \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        } elseif ($driver === 'sqlite') {
+            \DB::statement('PRAGMA foreign_keys = ON;');
+        }
 
         $this->showConfirm = false;
         $this->message = 'All qualifying and crossing times have been cleared.';
