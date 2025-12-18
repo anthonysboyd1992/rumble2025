@@ -92,7 +92,13 @@
     </div>
 
     <div class="header">
-        <h1>RUMBLE in Fort Wayne</h1>
+        @if(file_exists(public_path('logo.png')))
+            <img src="{{ asset('logo.png') }}" alt="RUMBLE Logo" style="height: 150px; margin-bottom: 10px;">
+        @elseif(file_exists(public_path('logo.svg')))
+            <img src="{{ asset('logo.svg') }}" alt="RUMBLE Logo" style="height: 150px; margin-bottom: 10px;">
+        @else
+            <h1>RUMBLE in Fort Wayne</h1>
+        @endif
         <p>{{ $className ?? 'All Classes' }} - Practice Times - {{ now()->format('F j, Y g:i A') }}</p>
         @if(isset($inversion))
             @if($inversion === 'full')
@@ -129,7 +135,8 @@
     </table>
 
     <div class="footer">
-        {{ $standings->count() }} drivers | www.rumbleinfortwayne.com
+        {{ $standings->count() }} drivers | www.rumbleinfortwayne.com<br>
+        Timing & Scoring powered by Premiere Transponder Timing & Scoring
     </div>
 </body>
 </html>

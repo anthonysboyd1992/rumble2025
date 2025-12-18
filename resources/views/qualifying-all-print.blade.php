@@ -34,7 +34,13 @@
         <button onclick="window.print()">{{ isset($showDay) && $showDay ? 'Print All Days' : 'Print Day' }} Practice Times</button>
     </div>
 
-    <h1>RUMBLE in Fort Wayne</h1>
+    @if(file_exists(public_path('logo.png')))
+        <img src="{{ asset('logo.png') }}" alt="RUMBLE Logo" style="height: 150px; margin-bottom: 10px;">
+    @elseif(file_exists(public_path('logo.svg')))
+        <img src="{{ asset('logo.svg') }}" alt="RUMBLE Logo" style="height: 150px; margin-bottom: 10px;">
+    @else
+        <h1>RUMBLE in Fort Wayne</h1>
+    @endif
     <h2>{{ isset($showDay) && $showDay ? 'All Days - ' : '' }}All Practice Times{{ $className ? ' - ' . $className : '' }}</h2>
 
     <table>
@@ -68,8 +74,9 @@
         </tbody>
     </table>
 
-    <p style="margin-top: 16px; font-size: 8pt; color: #999;">
-        {{ count($times) }} times | Generated {{ now()->format('M j, Y g:i A') }}
+    <p style="margin-top: 16px; font-size: 8pt; color: #999; text-align: center;">
+        {{ count($times) }} times | Generated {{ now()->format('M j, Y g:i A') }}<br>
+        Timing & Scoring powered by Premiere Transponder Timing & Scoring
     </p>
 </body>
 </html>
