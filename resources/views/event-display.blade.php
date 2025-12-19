@@ -7,16 +7,21 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     <style>
-        body {
-            background: #000;
+        html, body {
             margin: 0;
             padding: 0;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; overflow: hidden;">
-    <div class="h-screen w-screen flex items-center justify-center" style="background: #000; margin: 0; padding: 0;">
+<body>
+    <div class="w-full h-full flex items-center justify-center" style="background: #000;">
         <livewire:public-event-display />
     </div>
     @livewireScripts

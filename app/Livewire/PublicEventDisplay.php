@@ -15,8 +15,10 @@ class PublicEventDisplay extends Component
 
     public function render()
     {
+        $event = Event::current();
         return view('livewire.public-event-display', [
-            'eventNumber' => Event::current()->event_number,
+            'eventNumber' => $event->event_number,
+            'message' => $event->message,
         ]);
     }
 }

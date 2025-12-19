@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
-    protected $fillable = ['event_number'];
+    protected $fillable = ['event_number', 'message'];
 
     public static function current(): self
     {
