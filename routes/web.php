@@ -76,6 +76,14 @@ Route::get('/leaderboard', function () {
     return view('leaderboard');
 })->name('leaderboard');
 
+Route::get('/event-display', function () {
+    return view('event-display');
+})->name('event-display');
+
+Route::get('/event-counter', function () {
+    return view('event-counter');
+})->middleware(['auth'])->name('event-counter');
+
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

@@ -87,6 +87,21 @@
             </a>
         </div>
 
+        <!-- Event Counter -->
+        <a href="{{ route('event-counter') }}" class="group block p-6 rounded-xl border border-zinc-700 bg-zinc-800/50 hover:border-cyan-500 hover:bg-zinc-800 transition-all">
+            <div class="flex items-center gap-4">
+                <div class="p-3 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500/20">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-zinc-100">Event Counter</h2>
+                    <p class="text-zinc-400 text-sm">Manage event number for display</p>
+                </div>
+            </div>
+        </a>
+
         <!-- Quick Stats -->
         <div class="grid gap-4 md:grid-cols-4 mt-4">
             @php

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RUMBLE in Fort Wayne 2025</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
         <style>
         body {
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
@@ -12,12 +13,20 @@
         }
         </style>
     </head>
-<body class="text-white antialiased flex items-center justify-center min-h-screen">
-    <div class="text-center px-6">
+<body class="text-white antialiased">
+    <div class="min-h-screen flex flex-col items-center justify-center px-6">
         <x-rumble-logo class="mx-auto mb-8" />
         
         <h1 class="text-4xl font-bold mb-2">RUMBLE in Fort Wayne</h1>
         <p class="text-zinc-500 mb-12">2025</p>
+        
+        <a 
+            href="{{ route('event-display') }}" 
+            target="_blank"
+            class="px-8 py-4 rounded-lg text-lg font-semibold transition-all bg-green-500 text-white hover:bg-green-600 mb-12 inline-block"
+        >
+            View Event Counter →
+        </a>
         
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
@@ -48,5 +57,6 @@
             </div>
         @endauth
     </div>
+    @livewireScripts
     </body>
 </html>
