@@ -105,13 +105,14 @@
             {{-- Timing Grid --}}
             <div class="flex flex-1 {{ count($expandedDrivers) > 0 ? '' : '' }}">
                 {{-- Left Column --}}
-                <div class="flex-1 flex flex-col" style="border-right: 1px solid #333;">
+                <div class="flex-1 flex flex-col" style="border-right: 1px solid #333; min-width: 0;">
                     <div class="flex items-center px-3 py-1" style="background: #111; color: #666; border-bottom: 1px solid #333; font-size: 11px;">
                         <div style="width: 30px;">POS</div>
                         <div style="flex: 1;">DRIVER</div>
                         <div style="width: 70px; text-align: center;">FASTEST</div>
                         <div style="width: 40px; text-align: center;">LAPS</div>
                         <div style="width: 90px; text-align: right;">BEST</div>
+                        <div style="width: 70px; text-align: right;">SPEED</div>
                         <div style="width: 80px; text-align: right;">DIFF</div>
                     </div>
                     
@@ -133,28 +134,36 @@
                                 border-left: 2px solid {{ $isExpanded ? '#22c55e' : ($index === 0 ? '#22c55e' : 'transparent') }};
                             "
                         >
-                            <div style="width: 30px; color: #fff; font-weight: bold;">{{ $index + 1 }}</div>
-                            <div style="flex: 1;" class="flex items-center gap-2 truncate">
+                            <div style="width: 30px; flex-shrink: 0; color: #fff; font-weight: bold;">{{ $index + 1 }}</div>
+                            <div style="flex: 1; min-width: 0;" class="flex items-center gap-2 truncate">
                                 <span style="color: #22c55e; font-weight: bold;">#{{ $standing['car_number'] }}</span>
                                 <span style="color: #fff;" class="truncate">{{ strtoupper($standing['driver_name']) }}</span>
                             </div>
-                            <div style="width: 70px; text-align: center; color: #666; font-size: 10px;">{{ $standing['session_name'] ?? '' }}</div>
-                            <div style="width: 40px; text-align: center; color: #22c55e;">{{ $standing['lap_count'] }}</div>
-                            <div style="width: 90px; text-align: right; color: #22c55e; font-weight: bold;">{{ \App\Helpers\TimeFormatter::format($standing['best_time']) }}</div>
-                            <div style="width: 80px; text-align: right; color: #888;">{{ $gap ?? '' }}</div>
+                            <div style="width: 70px; flex-shrink: 0; text-align: center; color: #666; font-size: 10px;">{{ $standing['session_name'] ?? '' }}</div>
+                            <div style="width: 40px; flex-shrink: 0; text-align: center; color: #22c55e;">{{ $standing['lap_count'] }}</div>
+                            <div style="width: 90px; flex-shrink: 0; text-align: right; color: #22c55e; font-weight: bold;">{{ \App\Helpers\TimeFormatter::format($standing['best_time']) }}</div>
+                            <div style="width: 70px; flex-shrink: 0; text-align: right; color: #22c55e; font-size: 11px;">
+                                @if($standing['fastest_speed'] ?? null)
+                                    {{ $standing['fastest_speed'] }} mph
+                                @else
+                                    —
+                                @endif
+                            </div>
+                            <div style="width: 80px; flex-shrink: 0; text-align: right; color: #888;">{{ $gap ?? '' }}</div>
                         </div>
                     @endforeach
                 </div>
                 
                 {{-- Right Column --}}
-                <div class="flex-1 flex flex-col" style="border-right: 1px solid #333;">
+                <div class="flex-1 flex flex-col" style="border-right: 1px solid #333; min-width: 0;">
                     <div class="flex items-center px-3 py-1" style="background: #111; color: #666; border-bottom: 1px solid #333; font-size: 11px;">
-                        <div style="width: 30px;">POS</div>
-                        <div style="flex: 1;">DRIVER</div>
-                        <div style="width: 70px; text-align: center;">FASTEST</div>
-                        <div style="width: 40px; text-align: center;">LAPS</div>
-                        <div style="width: 90px; text-align: right;">BEST</div>
-                        <div style="width: 80px; text-align: right;">DIFF</div>
+                        <div style="width: 30px; flex-shrink: 0;">POS</div>
+                        <div style="flex: 1; min-width: 0;">DRIVER</div>
+                        <div style="width: 70px; flex-shrink: 0; text-align: center;">FASTEST</div>
+                        <div style="width: 40px; flex-shrink: 0; text-align: center;">LAPS</div>
+                        <div style="width: 90px; flex-shrink: 0; text-align: right;">BEST</div>
+                        <div style="width: 70px; flex-shrink: 0; text-align: right;">SPEED</div>
+                        <div style="width: 80px; flex-shrink: 0; text-align: right;">DIFF</div>
                     </div>
                     
                     @foreach($rightColumn as $index => $standing)
@@ -176,15 +185,22 @@
                                 border-left: 2px solid {{ $isExpanded ? '#22c55e' : 'transparent' }};
                             "
                         >
-                            <div style="width: 30px; color: #fff; font-weight: bold;">{{ $realIndex + 1 }}</div>
-                            <div style="flex: 1;" class="flex items-center gap-2 truncate">
+                            <div style="width: 30px; flex-shrink: 0; color: #fff; font-weight: bold;">{{ $realIndex + 1 }}</div>
+                            <div style="flex: 1; min-width: 0;" class="flex items-center gap-2 truncate">
                                 <span style="color: #22c55e; font-weight: bold;">#{{ $standing['car_number'] }}</span>
                                 <span style="color: #fff;" class="truncate">{{ strtoupper($standing['driver_name']) }}</span>
                             </div>
-                            <div style="width: 70px; text-align: center; color: #666; font-size: 10px;">{{ $standing['session_name'] ?? '' }}</div>
-                            <div style="width: 40px; text-align: center; color: #22c55e;">{{ $standing['lap_count'] }}</div>
-                            <div style="width: 90px; text-align: right; color: #22c55e; font-weight: bold;">{{ \App\Helpers\TimeFormatter::format($standing['best_time']) }}</div>
-                            <div style="width: 80px; text-align: right; color: #888;">{{ $gap }}</div>
+                            <div style="width: 70px; flex-shrink: 0; text-align: center; color: #666; font-size: 10px;">{{ $standing['session_name'] ?? '' }}</div>
+                            <div style="width: 40px; flex-shrink: 0; text-align: center; color: #22c55e;">{{ $standing['lap_count'] }}</div>
+                            <div style="width: 90px; flex-shrink: 0; text-align: right; color: #22c55e; font-weight: bold;">{{ \App\Helpers\TimeFormatter::format($standing['best_time']) }}</div>
+                            <div style="width: 70px; flex-shrink: 0; text-align: right; color: #22c55e; font-size: 11px;">
+                                @if($standing['fastest_speed'] ?? null)
+                                    {{ $standing['fastest_speed'] }} mph
+                                @else
+                                    —
+                                @endif
+                            </div>
+                            <div style="width: 80px; flex-shrink: 0; text-align: right; color: #888;">{{ $gap }}</div>
                         </div>
                     @endforeach
                 </div>

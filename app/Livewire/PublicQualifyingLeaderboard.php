@@ -111,12 +111,16 @@ class PublicQualifyingLeaderboard extends Component
                     ];
                 })->values();
 
+                // Calculate fastest speed based on best time
+                $fastestSpeed = \App\Helpers\TimeFormatter::calculateSpeed($best['time'], $this->trackLength);
+
                 return [
                     'car_number' => $best['car_number'],
                     'driver_name' => $best['driver_name'],
                     'best_time' => $best['time'],
                     'session_name' => $best['session'],
                     'lap_count' => $driverTimes->count(),
+                    'fastest_speed' => $fastestSpeed,
                     'times_by_session' => $timesBySession,
                 ];
             })
