@@ -51,6 +51,14 @@ class EventCounter extends Component
         $this->dispatch('event-updated');
     }
 
+    public function clearMessage(): void
+    {
+        $this->message = '';
+        $event = Event::current();
+        $event->update(['message' => null]);
+        $this->dispatch('event-updated');
+    }
+
     public function addPredefinedMessage(): void
     {
         if (empty(trim($this->newMessageText))) {

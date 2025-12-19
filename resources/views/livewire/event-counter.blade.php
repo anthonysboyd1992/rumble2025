@@ -45,9 +45,27 @@
                             {{ $predefined->text }}
                         </button>
                     @endforeach
+                    @if($message)
+                        <button 
+                            wire:click="clearMessage"
+                            class="px-3 py-1.5 rounded-lg text-sm transition-colors bg-red-600 text-white hover:bg-red-700"
+                        >
+                            Clear
+                        </button>
+                    @endif
                 </div>
             @else
-                <p class="text-zinc-500 text-sm">No predefined messages yet</p>
+                <div class="flex flex-wrap gap-2">
+                    <p class="text-zinc-500 text-sm">No predefined messages yet</p>
+                    @if($message)
+                        <button 
+                            wire:click="clearMessage"
+                            class="px-3 py-1.5 rounded-lg text-sm transition-colors bg-red-600 text-white hover:bg-red-700"
+                        >
+                            Clear
+                        </button>
+                    @endif
+                </div>
             @endif
         </div>
         
